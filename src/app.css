@@ -1,0 +1,52 @@
+/* =====================================================================
+   AuthorForge – App CSS entry (Solid)
+   ---------------------------------------------------------------------
+   Order matters:
+   1) Tokens first  → CSS variables available to everything
+   2) Tailwind base → preflight + normalize
+   3) Your base     → focus/selection/typography defaults
+   4) Tailwind components
+   5) Your components
+   6) Tailwind utilities
+   7) Your utilities
+   ===================================================================== */
+
+/* All @import statements must come first */
+@import './styles/tokens.css';
+@import './styles/base.css';
+@import './styles/components.css';
+@import './styles/utilities.css';
+
+/* Then Tailwind directives */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ---------------------------------------------------------------------
+   Optional tiny globals (safe anywhere)
+   --------------------------------------------------------------------- */
+
+/* Make dark/light switch hints to the browser for form controls, etc. */
+:root { color-scheme: light dark; }
+
+/* Smooth theme flips without violating reduced-motion preferences.
+   Apply .theme-transition to <html> just before toggling theme, then remove. */
+.theme-transition * {
+  transition: background-color var(--transition-med), color var(--transition-med);
+}
+@media (prefers-reduced-motion: reduce) {
+  .theme-transition * { transition: none !important; }
+}
+
+/* Utility to hide content visually but keep it accessible (if you need inline) */
+.visually-hidden {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}

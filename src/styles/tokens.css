@@ -1,0 +1,127 @@
+/* === Local Font Imports (installed via @fontsource) === */
+/* Ensure these packages are installed:
+   bun add @fontsource/inter @fontsource/eb-garamond @fontsource/jetbrains-mono @fontsource/cinzel-decorative
+*/
+
+@import "@fontsource/inter/400.css";
+@import "@fontsource/inter/600.css";
+@import "@fontsource/eb-garamond/400.css";
+@import "@fontsource/eb-garamond/600.css";
+@import "@fontsource/jetbrains-mono/400.css";
+@import "@fontsource/jetbrains-mono/500.css";
+@import "@fontsource/cinzel-decorative/700.css";
+
+/* -------------------------------------------------------
+   AuthorForge Design Tokens
+   Palette, typography, motion, and shadow system
+   ------------------------------------------------------- */
+
+/* ---------- Light (default) ---------- */
+:root {
+  /* === Brand Palette === */
+  --forge-ink: 11 15 18;           /* #0B0F12 - base text / UI ink */
+  --forge-brass: 199 162 106;      /* #C7A26A - highlight brass */
+  --forge-ember: 255 106 61;       /* #FF6A3D - forge ember / active glow */
+  --forge-iron: 58 62 70;          /* #3A3E46 - neutral dark steel */
+
+  /* === Theme Colors === */
+  --bg: 255 255 255;               /* white background */
+  --fg: 15 18 22;                  /* primary text */
+  --subtle: 90 94 102;             /* muted text/border */
+  --accent: var(--forge-ember);    /* default accent hue */
+
+  /* === Typography === */
+  --font-ui: "Inter", system-ui, sans-serif;
+  --font-serif: "EB Garamond", Georgia, serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+  --font-display: "Cinzel Decorative", serif;
+
+  /* === Radii === */
+  --radius: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1.25rem;
+
+  /* === Shadows === */
+  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.06), 0 8px 24px rgba(0, 0, 0, 0.08);
+  --shadow-elevate: 0 10px 30px rgba(0, 0, 0, 0.12);
+  --shadow-ember: 0 0 0 2px rgba(255, 106, 61, 0.25),
+                   0 8px 24px rgba(255, 106, 61, 0.12);
+
+  /* === Motion === */
+  --transition-fast: 150ms ease;
+  --transition-med: 250ms ease;
+  --transition-slow: 400ms ease;
+}
+
+/* ---------- Dark Mode (via .dark or [data-theme="dark"]) ---------- */
+.dark,
+[data-theme="dark"] {
+  /* Backgrounds & Text */
+  --bg: 13 16 18;                  /* nearly black */
+  --fg: 240 240 242;               /* off-white text */
+  --subtle: 160 164 170;           /* muted gray lines */
+  --accent: var(--forge-brass);    /* switch to brass glow */
+
+  /* Same forge colors (can tweak if you want richer contrast) */
+  --forge-ink: 11 15 18;
+  --forge-brass: 199 162 106;
+  --forge-ember: 255 106 61;
+  --forge-iron: 26 31 36;
+
+  /* Shadows */
+  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.25),
+                 0 8px 24px rgba(0, 0, 0, 0.35);
+  --shadow-elevate: 0 10px 30px rgba(0, 0, 0, 0.4);
+  --shadow-ember: 0 0 0 2px rgba(255, 106, 61, 0.25),
+                   0 8px 24px rgba(255, 106, 61, 0.22);
+}
+
+/* ---------- Optional Accent Variants ---------- */
+[data-theme="brass"] { --accent: var(--forge-brass); }
+[data-theme="ember"] { --accent: var(--forge-ember); }
+[data-theme="ink"]   { --accent: var(--forge-ink);   }
+[data-theme="iron"]  { --accent: var(--forge-iron);  }
+
+/* ---------- Global Base ---------- */
+html {
+  font-family: var(--font-ui);
+  color: rgb(var(--fg));
+  background-color: rgb(var(--bg));
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  transition:
+    background-color var(--transition-med),
+    color var(--transition-med);
+}
+
+/* ---------- Utility Layers ---------- */
+.surface {
+  background-color: rgb(var(--bg));
+}
+
+.panel {
+  background-color: rgb(var(--forge-iron) / 0.15);
+  border: 1px solid rgb(var(--subtle) / 0.15);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  transition: all var(--transition-med);
+}
+
+.dark .panel {
+  background-color: rgb(var(--forge-iron) / 0.35);
+  border-color: rgb(var(--subtle) / 0.15);
+  box-shadow: var(--shadow-card);
+}
+
+/* For active nav tabs / forge elements */
+.glow-ember {
+  box-shadow: var(--shadow-ember);
+}
+
+/* Hover highlight on links */
+a {
+  transition: color var(--transition-fast);
+}
+a:hover {
+  color: rgb(var(--accent));
+}

@@ -1,0 +1,73 @@
+@layer components {
+  /* Buttons */
+  .btn {
+    @apply inline-flex items-center gap-2 h-10 px-[14px]
+           rounded-[var(--radius)]
+           text-bg font-semibold
+           transition-colors duration-150;
+    background: rgb(var(--accent));
+    border: 1px solid transparent;
+  }
+  .btn:hover   { background: rgb(var(--accent) / .9); }
+  .btn:active  { background: rgb(var(--accent) / .8); }
+
+  .btn-ghost {
+    @apply inline-flex items-center gap-2 h-10 px-[14px]
+           rounded-[var(--radius)]
+           text-fg;
+    background: transparent;
+    border: 1px solid rgb(var(--fg) / .12);
+    transition: background-color .15s ease, border-color .15s ease;
+  }
+  .btn-ghost:hover {
+    background: rgb(var(--fg) / .05);
+    border-color: rgb(var(--fg) / .20);
+  }
+
+  /* Card */
+  .card {
+    @apply p-5 rounded-[var(--radius-lg)];
+    background: rgb(var(--bg) / .95);
+    color: rgb(var(--fg));
+    border: 1px solid rgb(var(--fg) / .08);
+    box-shadow: var(--shadow-card);
+  }
+
+  /* Badge */
+  .badge {
+    @apply inline-flex items-center gap-1 h-7 px-2 rounded-full text-sm;
+    border: 1px solid rgb(var(--fg) / .10);
+    background: rgb(var(--fg) / .04);
+  }
+
+  /* Input */
+  .input {
+    @apply h-10 w-full rounded-[var(--radius)] px-3;
+    border: 1px solid rgb(var(--fg) / .15);
+    background: rgb(var(--bg) / .9);
+    color: rgb(var(--fg));
+  }
+  .input::placeholder { color: rgb(var(--subtle) / .7); }
+  .input:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgb(var(--accent) / .4);
+    border-color: rgb(var(--accent) / .4);
+  }
+
+  /* Toolbar (sticky header) */
+  .toolbar {
+    position: sticky; top: 0; z-index: 40;
+    background: rgb(var(--bg) / .85);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid rgb(var(--fg) / .10);
+  }
+
+  /* Surfaces (quick panels without plugin) */
+  .surface { 
+    @apply rounded-[var(--radius-lg)];
+    color: rgb(var(--fg));
+    border: 1px solid rgb(var(--fg) / .10);
+    backdrop-filter: blur(8px);
+    background: rgb(var(--bg) / .95);
+  }
+}

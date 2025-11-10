@@ -1,0 +1,62 @@
+@layer base {
+  /* Selection color */
+  ::selection {
+    background: rgb(var(--accent) / .25);
+    color: rgb(var(--fg));
+  }
+
+  /* Smooth transitions for theme flips */
+  html {
+    transition: background-color 0.25s ease, color 0.25s ease;
+  }
+
+  /* Focus outlines (accessible) */
+  :focus-visible {
+    outline: 2px solid rgb(var(--accent) / .7);
+    outline-offset: 2px;
+  }
+
+  /* Links */
+  a {
+    color: rgb(var(--accent));
+    text-decoration: none;
+  }
+  a:hover { color: rgb(var(--forge-brass)); }
+
+  /* Headings use display font */
+  h1,h2,h3,h4,h5,h6 {
+    font-family: var(--font-display);
+    font-weight: 700;
+    letter-spacing: .02em;
+    color: rgb(var(--fg));
+  }
+
+  /* Body copy uses serif for comfortable reading */
+  p, li, blockquote, article {
+    font-family: var(--font-serif);
+    line-height: 1.65;
+    color: rgb(var(--fg) / .92);
+  }
+
+  /* Monospace elements */
+  code, pre, kbd, samp {
+    font-family: var(--font-mono);
+    font-size: .95em;
+  }
+
+  /* Scrollbar (WebKit) */
+  ::-webkit-scrollbar { width: 10px; height: 10px; }
+  ::-webkit-scrollbar-thumb { background: rgb(var(--fg) / .25); border-radius: 6px; }
+  ::-webkit-scrollbar-track { background: rgb(var(--bg)); }
+
+  /* Smooth transitions for theme flips */
+  html {
+    transition:
+      background-color var(--transition-med),
+      color var(--transition-med);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; animation: none !important; }
+  }
+}

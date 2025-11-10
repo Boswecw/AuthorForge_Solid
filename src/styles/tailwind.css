@@ -1,0 +1,8 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer utilities {
+  .surface { @apply bg-white dark:bg-forge-steel; }
+  .panel   { @apply rounded-xl border border-black/5 dark:border-white/10 bg-white/5 dark:bg-black/10; }
+}
