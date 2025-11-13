@@ -1,6 +1,6 @@
 /* === Local Font Imports (installed via @fontsource) === */
 /* Ensure these packages are installed:
-   bun add @fontsource/inter @fontsource/eb-garamond @fontsource/jetbrains-mono @fontsource/cinzel-decorative
+   yarn add @fontsource/inter @fontsource/eb-garamond @fontsource/jetbrains-mono @fontsource/cinzel-decorative @fontsource/courier-prime
 */
 
 @import "@fontsource/inter/400.css";
@@ -10,6 +10,8 @@
 @import "@fontsource/jetbrains-mono/400.css";
 @import "@fontsource/jetbrains-mono/500.css";
 @import "@fontsource/cinzel-decorative/700.css";
+@import "@fontsource/courier-prime/400.css";
+@import "@fontsource/courier-prime/700.css";
 
 /* -------------------------------------------------------
    AuthorForge Design Tokens
@@ -17,12 +19,16 @@
    ------------------------------------------------------- */
 
 /* ---------- Light (default) ---------- */
-:root {
+:root,
+[data-theme="forge-light"] {
   /* === Brand Palette === */
-  --forge-ink: 11 15 18;           /* #0B0F12 - base text / UI ink */
-  --forge-brass: 199 162 106;      /* #C7A26A - highlight brass */
-  --forge-ember: 255 106 61;       /* #FF6A3D - forge ember / active glow */
-  --forge-iron: 58 62 70;          /* #3A3E46 - neutral dark steel */
+  --forge-ash: 27 27 27;           /* #1B1B1B - ash (dark) */
+  --forge-brass: 207 163 74;       /* #CFA34A - brass */
+  --forge-ember: 255 105 61;       /* #FF693D - ember */
+  --forge-steel: 154 160 172;      /* #9AA0AC - steel */
+  --forge-parchment: 244 239 230;  /* #F4EFE6 - parchment */
+  --forge-ink: 11 15 18;           /* #0B0F12 - base text / UI ink (legacy) */
+  --forge-iron: 58 62 70;          /* #3A3E46 - neutral dark steel (legacy) */
 
   /* === Theme Colors === */
   --bg: 255 255 255;               /* white background */
@@ -34,10 +40,13 @@
   --font-ui: "Inter", system-ui, sans-serif;
   --font-serif: "EB Garamond", Georgia, serif;
   --font-mono: "JetBrains Mono", ui-monospace, monospace;
+  --font-typewriter: "Courier Prime", "Courier New", monospace;
   --font-display: "Cinzel Decorative", serif;
 
   /* === Radii === */
+  --radius-sm: 0.375rem;
   --radius: 0.5rem;
+  --radius-md: 0.5rem;
   --radius-lg: 0.75rem;
   --radius-xl: 1.25rem;
 
@@ -53,19 +62,22 @@
   --transition-slow: 400ms ease;
 }
 
-/* ---------- Dark Mode (via .dark or [data-theme="dark"]) ---------- */
+/* ---------- Dark Mode (via .dark or [data-theme="forge-dark"]) ---------- */
 .dark,
-[data-theme="dark"] {
+[data-theme="forge-dark"] {
   /* Backgrounds & Text */
-  --bg: 13 16 18;                  /* nearly black */
-  --fg: 240 240 242;               /* off-white text */
-  --subtle: 160 164 170;           /* muted gray lines */
+  --bg: 27 27 27;                  /* forge.ash #1B1B1B */
+  --fg: 244 239 230;               /* forge.parchment #F4EFE6 */
+  --subtle: 154 160 172;           /* forge.steel #9AA0AC */
   --accent: var(--forge-brass);    /* switch to brass glow */
 
-  /* Same forge colors (can tweak if you want richer contrast) */
+  /* Brand colors remain consistent */
+  --forge-ash: 27 27 27;
+  --forge-brass: 207 163 74;
+  --forge-ember: 255 105 61;
+  --forge-steel: 154 160 172;
+  --forge-parchment: 244 239 230;
   --forge-ink: 11 15 18;
-  --forge-brass: 199 162 106;
-  --forge-ember: 255 106 61;
   --forge-iron: 26 31 36;
 
   /* Shadows */
@@ -79,6 +91,8 @@
 /* ---------- Optional Accent Variants ---------- */
 [data-theme="brass"] { --accent: var(--forge-brass); }
 [data-theme="ember"] { --accent: var(--forge-ember); }
+[data-theme="steel"] { --accent: var(--forge-steel); }
+[data-theme="ash"]   { --accent: var(--forge-ash);   }
 [data-theme="ink"]   { --accent: var(--forge-ink);   }
 [data-theme="iron"]  { --accent: var(--forge-iron);  }
 

@@ -1,0 +1,104 @@
+patterns:
+  # Person patterns
+  - id: person_title_name
+    kind: Person
+    regex: "(?:Lord|Lady|Queen|King|Prince|Princess|Captain|Archmage|Sir|Dame|Duke|Duchess)\\s+([A-Z][\\p{L}''-]+)"
+    score: 0.92
+    hints:
+      left: []
+      right: ["of", "the", "from"]
+
+  - id: person_title_full_name
+    kind: Person
+    regex: "(?:Lord|Lady|Queen|King)\\s+([A-Z][\\p{L}''-]+(?:\\s+[A-Z][\\p{L}''-]+)?)"
+    score: 0.95
+    hints:
+      left: []
+      right: ["of", "the"]
+
+  - id: person_bare_proper
+    kind: Person
+    regex: "\\b([A-Z][\\p{L}''-]+(?:\\s+[A-Z][\\p{L}''-]+){0,2})\\b"
+    score: 0.65
+    constraints:
+      min_len: 1
+      max_tokens: 3
+      disallow:
+        - Place
+        - Faction
+
+  # Place patterns
+  - id: place_preposition_name
+    kind: Place
+    regex: "\\b(?:of|at|near|into|from|to)\\s+(?:the\\s+)?([A-Z][\\p{L}''-]+(?:\\s+[A-Z][\\p{L}''-]+)*)"
+    score: 0.75
+
+  - id: place_the_name
+    kind: Place
+    regex: "\\bthe\\s+([A-Z][\\p{L}''-]+(?:\\s+[A-Z][\\p{L}''-]+){0,2})"
+    score: 0.70
+
+  - id: place_compound
+    kind: Place
+    regex: "\\b([A-Z][\\p{L}''-]+\\s+(?:Coast|Valley|Mountain|Forest|Keep|Castle|Tower|City|Town|Village|Isle|Island|Sea|Ocean|River|Lake))\\b"
+    score: 0.85
+
+  # Faction patterns
+  - id: faction_plural
+    kind: Faction
+    regex: "\\b([A-Z][\\p{L}''-]+\\s+of\\s+[A-Z][\\p{L}''-]+s?)\\b"
+    score: 0.8
+
+  - id: faction_the_plural
+    kind: Faction
+    regex: "\\bthe\\s+([A-Z][\\p{L}''-]+(?:\\s+[A-Z][\\p{L}''-]+){0,2}s)\\b"
+    score: 0.75
+
+  - id: faction_order
+    kind: Faction
+    regex: "\\b(Order\\s+of\\s+[A-Z][\\p{L}''-]+)\\b"
+    score: 0.9
+
+  - id: faction_brotherhood
+    kind: Faction
+    regex: "\\b([A-Z][\\p{L}''-]+\\s+(?:Brotherhood|Sisterhood|Guild|Council|Alliance|Horde|Legion|Guard))\\b"
+    score: 0.85
+
+  # Magic patterns
+  - id: magic_rite
+    kind: Magic
+    regex: "\\b([A-Z][\\p{L}''-]+\\s+(?:Rite|Canticle|Working|Sigil|Spell|Incantation))\\b"
+    score: 0.9
+
+  - id: magic_the_spell
+    kind: Magic
+    regex: "\\bthe\\s+([A-Z][\\p{L}''-]+\\s+(?:Spell|Curse|Blessing|Enchantment))\\b"
+    score: 0.88
+
+  # Item patterns
+  - id: item_blade
+    kind: Item
+    regex: "\\b([A-Z][\\p{L}''-]+(?:blade|sword|axe|hammer|mace|staff|wand))\\b"
+    score: 0.85
+
+  - id: item_of_name
+    kind: Item
+    regex: "\\b([A-Z][\\p{L}''-]+\\s+of\\s+[A-Z][\\p{L}''-]+)\\b"
+    score: 0.75
+
+  - id: item_the_artifact
+    kind: Item
+    regex: "\\bthe\\s+([A-Z][\\p{L}''-]+(?:\\s+[A-Z][\\p{L}''-]+){0,2})\\b"
+    score: 0.65
+
+  # Creature patterns
+  - id: creature_compound
+    kind: Creature
+    regex: "\\b([A-Z][\\p{L}''-]+\\s+(?:Drake|Dragon|Wyrm|Beast|Demon|Devil|Elemental|Golem|Giant|Troll|Ogre|Orc))\\b"
+    score: 0.88
+
+  - id: creature_the_monster
+    kind: Creature
+    regex: "\\bthe\\s+([A-Z][\\p{L}''-]+\\s+(?:Monster|Horror|Terror|Abomination))\\b"
+    score: 0.85
+

@@ -17,6 +17,10 @@
 @import './styles/components.css';
 @import './styles/utilities.css';
 
+/* ✅ Add TipTap import right after your own base/component layers,
+   but before the Tailwind directives */
+@import './styles/tiptap.css';
+
 /* Then Tailwind directives */
 @tailwind base;
 @tailwind components;
@@ -29,8 +33,7 @@
 /* Make dark/light switch hints to the browser for form controls, etc. */
 :root { color-scheme: light dark; }
 
-/* Smooth theme flips without violating reduced-motion preferences.
-   Apply .theme-transition to <html> just before toggling theme, then remove. */
+/* Smooth theme flips without violating reduced-motion preferences. */
 .theme-transition * {
   transition: background-color var(--transition-med), color var(--transition-med);
 }

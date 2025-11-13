@@ -1,0 +1,36 @@
+# Default calendar configuration
+# Can be overridden per-project with calendar.{project}.yaml
+
+months:
+  - January
+  - February
+  - March
+  - April
+  - May
+  - June
+  - July
+  - August
+  - September
+  - October
+  - November
+  - December
+
+epochs:
+  - AD
+  - BC
+  - CE
+  - BCE
+
+seasons:
+  - Spring
+  - Summer
+  - Autumn
+  - Fall
+  - Winter
+
+day_suffixes:
+  - st
+  - nd
+  - rd
+  - th
+

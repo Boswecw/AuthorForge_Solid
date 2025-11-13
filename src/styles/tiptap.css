@@ -1,0 +1,65 @@
+/* TipTap forge-themed baseline */
+
+.ProseMirror {
+  min-height: 60vh;
+  padding: 1.25rem;
+  border-radius: 1.25rem;
+  background: transparent;
+  color: rgb(var(--fg));
+  font-family: var(--font-serif, 'EB Garamond'), serif;
+  font-size: 1.125rem;
+  line-height: 1.75rem;
+  outline: none;
+  transition: color 0.25s ease;
+}
+
+.ProseMirror p { margin: 0.5rem 0; }
+
+.ProseMirror h1 {
+  font-family: var(--font-display, 'Cinzel Decorative'), serif;
+  font-size: 2rem;
+  font-weight: 700;
+  margin: 1.5rem 0 0.75rem;
+  line-height: 1.2;
+}
+
+.ProseMirror h2 {
+  font-family: var(--font-display, 'Cinzel Decorative'), serif;
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin: 1.25rem 0 0.625rem;
+  line-height: 1.3;
+}
+
+.ProseMirror h3 {
+  font-family: var(--font-display, 'Cinzel Decorative'), serif;
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin: 1rem 0 0.5rem;
+  line-height: 1.4;
+}
+.ProseMirror a {
+  color: rgb(var(--forge-ember));
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.ProseMirror:focus {
+  box-shadow:
+    0 0 0 2px rgba(var(--forge-brass), .25),
+    0 8px 24px rgba(0,0,0,.08);
+}
+
+/* Placeholder text */
+.ProseMirror p.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  color: rgb(var(--forge-steel) / .7);
+  pointer-events: none;
+  float: left;
+  height: 0;
+}
+
+/* Highlight selection */
+.ProseMirror ::selection {
+  background: rgb(var(--forge-ember) / .25);
+}

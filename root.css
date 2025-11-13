@@ -1,0 +1,148 @@
+@import "./styles/fonts-authorforge.css";
+/* ===========================================================
+   AUTHORFORGE ROOT CSS
+   Loads all local fonts, themes, Tailwind layers, and globals
+   =========================================================== */
+
+/* 1. LOCAL FONTS ------------------------------------------- */
+@import "./styles/fonts-authorforge.css";
+
+
+/* 2. TAILWIND LAYERS ---------------------------------------- */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+/* 3. ROOT VARIABLES (LIGHT THEME) ---------------------------- */
+
+:root {
+  /* Neutral foreground/background */
+  --fg: 20 20 20;
+  --bg: 248 248 248;
+  --subtle: 110 110 110;
+
+  /* Forge palette */
+  --forge-ash: 180 180 185;
+  --forge-brass: 212 165 66;
+  --forge-ember: 255 106 61;
+  --forge-steel: 120 130 140;
+  --forge-parchment: 245 237 222;
+  --forge-ink: 20 20 20;
+  --forge-iron: 80 80 90;
+
+  /* Accent highlight */
+  --accent: 255 106 61;
+}
+
+/* 4. DARK THEME (FORGE DARK) ------------------------------ */
+/* Triggered by: <html data-theme="forge-dark"> */
+
+[data-theme="forge-dark"] {
+  --fg: 235 235 235;
+  --bg: 20 20 25;
+  --subtle: 150 150 160;
+
+  --forge-ash: 110 110 120;
+  --forge-brass: 210 170 90;
+  --forge-ember: 255 106 61;
+  --forge-steel: 150 160 175;
+  --forge-parchment: 55 50 45;
+  --forge-ink: 230 230 230;
+  --forge-iron: 130 130 145;
+
+  --accent: 255 106 61;
+}
+
+/* 5. BASE GLOBALS ------------------------------------------- */
+
+html, body {
+  @apply min-h-screen w-full antialiased;
+  color: rgb(var(--fg));
+  background-color: rgb(var(--bg));
+}
+
+/* Scrollbars (subtle, professional) */
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-track {
+  background: rgba(var(--forge-ash), 0.15);
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(var(--forge-steel), 0.4);
+  border-radius: 6px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(var(--forge-steel), 0.6);
+}
+
+/* Remove focus outlines unless keyboard navigating */
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* Typography defaults */
+body {
+  font-family: "InterCustom", system-ui, sans-serif;
+}
+
+/* 6. HEADINGS ----------------------------------------------- */
+
+h1, h2, h3, h4, h5, h6 {
+  color: rgb(var(--fg));
+  text-rendering: optimizeLegibility;
+  font-family: "Cinzel", serif;
+}
+
+/* 7. LINKS --------------------------------------------------- */
+a {
+  color: rgb(var(--forge-ember));
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
+}
+
+/* 8. FORGE UTILITY CLASSES ---------------------------------- */
+
+.surface {
+  background-color: rgb(var(--bg) / 0.8);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  border: 1px solid rgba(var(--forge-steel), 0.25);
+}
+
+/* Soft card shadows for all AF cards */
+.shadow-af-soft {
+  box-shadow: 0 1px 2px rgba(0,0,0,.06), 0 6px 18px rgba(0,0,0,.08);
+}
+
+/* Glow for interactive Forge elements */
+.glow-forge {
+  box-shadow: 0 0 8px rgba(var(--forge-ember), 0.3);
+}
+
+/* 9. EDITOR DEFAULTS (Smithy) -------------------------------- */
+
+.smithy-editor {
+  @apply w-full h-full outline-none resize-none;
+  color: rgb(var(--fg));
+  background-color: transparent;
+  caret-color: rgb(var(--forge-ember));
+}
+
+/* Placeholder styling */
+.smithy-editor::placeholder {
+  color: rgba(var(--forge-steel), 0.6);
+}
+
+/* 10. REDUCED MOTION SUPPORT -------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.001s !important;
+    transition-duration: 0.001s !important;
+    scroll-behavior: auto !important;
+  }
+}

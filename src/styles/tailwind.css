@@ -1,8 +1,26 @@
+/* Load your component utilities first */
+@import "./components.css";
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+/* (Optional) tiny helpers if you use them widely */
 @layer utilities {
-  .surface { @apply bg-white dark:bg-forge-steel; }
-  .panel   { @apply rounded-xl border border-black/5 dark:border-white/10 bg-white/5 dark:bg-black/10; }
+  .surface { background-color: rgb(var(--bg)); }
+  .panel {
+    background-color: rgb(var(--forge-iron) / 0.15);
+    border: 1px solid rgb(var(--subtle) / 0.15);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-card);
+    transition: all var(--transition-med);
+  }
+  .glow-ember { box-shadow: var(--shadow-ember); }
+
+  /* Project.md required utilities */
+  .shadow-forge { box-shadow: var(--shadow-elevate); }
+  .accent-border { border-color: rgb(var(--accent) / 0.45); }
+  .radius-sm { border-radius: var(--radius-sm); }
+  .radius-md { border-radius: var(--radius-md); }
+  .radius-lg { border-radius: var(--radius-lg); }
 }

@@ -4,7 +4,7 @@ import { createSignal, onMount } from "solid-js";
  * Persistent theme controller.
  * - Reads saved theme from localStorage
  * - Falls back to prefers-color-scheme
- * - Applies/removes .dark on <html> (and data-theme="dark" for your config)
+ * - Applies/removes .dark on <html> and sets data-theme="forge-light" | "forge-dark"
  */
 type Theme = "light" | "dark";
 
@@ -17,10 +17,10 @@ function applyTheme(t: Theme) {
   const root = document.documentElement;
   if (t === "dark") {
     root.classList.add("dark");
-    root.setAttribute("data-theme", "dark");
+    root.setAttribute("data-theme", "forge-dark");
   } else {
     root.classList.remove("dark");
-    root.removeAttribute("data-theme");
+    root.setAttribute("data-theme", "forge-light");
   }
   localStorage.setItem(storageKey, t);
 }

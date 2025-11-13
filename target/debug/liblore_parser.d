@@ -1,0 +1,1 @@
+/home/charles/projects/Coding2025/AuthorForge_Solid_new/target/debug/liblore_parser.rlib: /home/charles/projects/Coding2025/AuthorForge_Solid_new/backend-rs/crates/lore_parser/src/lib.rs /home/charles/projects/Coding2025/AuthorForge_Solid_new/backend-rs/crates/shared/src/lib.rs

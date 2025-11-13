@@ -1,0 +1,14 @@
+/home/charles/projects/Coding2025/AuthorForge_Solid_new/target/debug/deps/thiserror-d5ffd694d3dc81b7.d: /home/charles/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.17/src/lib.rs /home/charles/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.17/src/aserror.rs /home/charles/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.17/src/display.rs /home/charles/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.17/src/var.rs /home/charles/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.17/src/private.rs /home/charles/projects/Coding2025/AuthorForge_Solid_new/target/debug/build/thiserror-e1b60979f16b3b6b/out/private.rs
+
+/home/charles/projects/Coding2025/AuthorForge_Solid_new/target/debug/deps/libthiserror-d5ffd694d3dc81b7.rlib: /home/charles/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.17/src/lib.rs /home/charles/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.17/src/aserror.rs /home/charles/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.17/src/display.rs /home/charles/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.17/src/var.rs /home/charles/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.17/src/private.rs /home/charles/projects/Coding2025/AuthorForge_Solid_new/target/debug/build/thiserror-e1b60979f16b3b6b/out/private.rs
+
+/home/charles/projects/Coding2025/AuthorForge_Solid_new/target/debug/deps/libthiserror-d5ffd694d3dc81b7.rmeta: /home/charles/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.17/src/lib.rs /home/charles/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.17/src/aserror.rs /home/charles/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.17/src/display.rs /home/charles/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.17/src/var.rs /home/charles/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.17/src/private.rs /home/charles/projects/Coding2025/AuthorForge_Solid_new/target/debug/build/thiserror-e1b60979f16b3b6b/out/private.rs
+
+/home/charles/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.17/src/lib.rs:
+/home/charles/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.17/src/aserror.rs:
+/home/charles/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.17/src/display.rs:
+/home/charles/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.17/src/var.rs:
+/home/charles/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.17/src/private.rs:
+/home/charles/projects/Coding2025/AuthorForge_Solid_new/target/debug/build/thiserror-e1b60979f16b3b6b/out/private.rs:
+
+# env-dep:OUT_DIR=/home/charles/projects/Coding2025/AuthorForge_Solid_new/target/debug/build/thiserror-e1b60979f16b3b6b/out

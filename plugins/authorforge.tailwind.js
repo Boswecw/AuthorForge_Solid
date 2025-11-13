@@ -166,10 +166,12 @@ module.exports = plugin(function ({ addUtilities, addComponents, addVariant, mat
     }
   );
 
-  // 2) accent-[forge.ember|forge.brass|forge.ink|forge.iron]
+  // 2) accent-[forge.ember|forge.brass|forge.ash|forge.steel]
   const accentMap = {
     'forge.ember': 'var(--forge-ember)',
     'forge.brass': 'var(--forge-brass)',
+    'forge.steel': 'var(--forge-steel)',
+    'forge.ash': 'var(--forge-ash)',
     'forge.ink': 'var(--forge-ink)',
     'forge.iron': 'var(--forge-iron)',
   };

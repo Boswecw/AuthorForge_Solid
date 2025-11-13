@@ -1,0 +1,22 @@
+# Project-specific calendar for "mythos" project
+# These will be merged with the default calendar
+
+months:
+  - Stormtide
+  - Frostfall
+  - Sunwane
+  - Deepdark
+  - Bloomrise
+  - Harvestmoon
+
+epochs:
+  - AE  # After Empire
+  - BE  # Before Empire
+  - DR  # Dragon Reign
+
+seasons:
+  - Longnight
+  - Thaw
+  - Highsun
+  - Reaping
+

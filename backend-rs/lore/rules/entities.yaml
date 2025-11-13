@@ -1,0 +1,98 @@
+kinds:
+  Person:
+    titles:
+      - Lord
+      - Lady
+      - Queen
+      - King
+      - Prince
+      - Princess
+      - Captain
+      - Archmage
+      - Sir
+      - Dame
+      - Duke
+      - Duchess
+    honorifics:
+      - of
+      - the
+      - from
+    gazetteer:
+      - Amicae
+      - Rawn
+      - Ithek Acolyte
+      - Theron
+      - Elara
+      - Kael
+      - Lyra
+      - Darius
+      - Seraphina
+      - Aldric
+
+  Place:
+    gazetteer:
+      - Eryndor
+      - Storm Coast
+      - Gethsemane Valley
+      - Ironforge
+      - Stormwind
+      - Shadowfang Keep
+      - Blackrock Mountain
+      - Elwynn Forest
+      - Westfall
+      - Redridge Mountains
+      - Duskwood
+      - Northshire
+      - Goldshire
+
+  Faction:
+    gazetteer:
+      - Ithek Acolytes
+      - Order of Aeloria
+      - Stormwind Guard
+      - Defias Brotherhood
+      - The Iron Legion
+      - Silver Hand
+      - Scarlet Crusade
+      - Argent Dawn
+      - Knights of the Ebon Blade
+
+  Item:
+    gazetteer:
+      - Scorchblade
+      - Eye of Aeloria
+      - Frostmourne
+      - Ashbringer
+      - Thunderfury
+      - Sulfuras
+      - Atiesh
+      - The Aegis
+      - Crown of Dominion
+      - Scepter of the Ancients
+
+  Magic:
+    gazetteer:
+      - Maelstrom Rite
+      - Tempest Canticle
+      - Arcane Missiles
+      - Fireball
+      - Frostbolt
+      - Shadow Bolt
+      - Holy Light
+      - Divine Shield
+      - Resurrection
+      - Polymorph
+
+  Creature:
+    gazetteer:
+      - Mind Reaver
+      - Nighthawk Drake
+      - Frost Wyrm
+      - Infernal
+      - Doomguard
+      - Fel Reaver
+      - Pit Lord
+      - Void Walker
+      - Succubus
+      - Felhound
+

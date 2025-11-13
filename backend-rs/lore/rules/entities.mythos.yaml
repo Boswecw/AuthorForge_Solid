@@ -1,0 +1,26 @@
+# Project-specific entities for "mythos" project
+# These will be merged with the default entities
+
+kinds:
+  Person:
+    gazetteer:
+      - Theron Blackwood
+      - Lyra Stormborn
+      - Kael the Wanderer
+
+  Place:
+    gazetteer:
+      - Shadowpeak Mountains
+      - Crystal Spire
+      - The Sunken City
+
+  Faction:
+    gazetteer:
+      - The Shadow Council
+      - Order of the Silver Dawn
+
+  Magic:
+    gazetteer:
+      - Voidcall Ritual
+      - Starfire Invocation
+
