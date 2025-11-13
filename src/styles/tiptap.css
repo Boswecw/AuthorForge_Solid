@@ -63,3 +63,66 @@
 .ProseMirror ::selection {
   background: rgb(var(--forge-ember) / .25);
 }
+
+/* Text highlight (mark) */
+.ProseMirror mark {
+  background-color: rgba(255, 235, 59, 0.4);
+  color: inherit;
+  padding: 0.125rem 0;
+  border-radius: 0.125rem;
+}
+
+/* Dark mode adjustments */
+@media (prefers-color-scheme: dark) {
+  .ProseMirror mark {
+    background-color: rgba(255, 235, 59, 0.3);
+  }
+}
+
+/* Font family support - ensure custom fonts are applied */
+.ProseMirror [style*="font-family"] {
+  /* Font families are applied inline via the extension */
+}
+
+/* Font size support */
+.ProseMirror [style*="font-size"] {
+  /* Font sizes are applied inline via the extension */
+}
+
+/* Line height support */
+.ProseMirror [style*="line-height"] {
+  /* Line heights are applied inline via the extension */
+}
+
+/* Ensure bold/italic/underline work properly */
+.ProseMirror strong {
+  font-weight: 700;
+}
+
+.ProseMirror em {
+  font-style: italic;
+}
+
+.ProseMirror u {
+  text-decoration: underline;
+}
+
+/* List styling */
+.ProseMirror ul,
+.ProseMirror ol {
+  padding-left: 1.5rem;
+  margin: 0.5rem 0;
+}
+
+.ProseMirror li {
+  margin: 0.25rem 0;
+}
+
+/* Blockquote styling */
+.ProseMirror blockquote {
+  border-left: 3px solid rgb(var(--forge-brass));
+  padding-left: 1rem;
+  margin: 1rem 0;
+  font-style: italic;
+  color: rgb(var(--subtle));
+}

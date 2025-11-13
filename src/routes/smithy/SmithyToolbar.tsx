@@ -7,6 +7,8 @@ export type { SmithyTextFormat } from "./SmithyTextFormat";
 interface SmithyToolbarProps {
   format: SmithyTextFormat;
   onFormatChange: (next: SmithyTextFormat) => void;
+  onUndo?: () => void;
+  onRedo?: () => void;
 }
 
 export default function SmithyToolbar(props: SmithyToolbarProps) {
@@ -187,6 +189,30 @@ export default function SmithyToolbar(props: SmithyToolbarProps) {
           U
         </button>
       </div>
+
+      {/* Undo/Redo controls */}
+      {(props.onUndo || props.onRedo) && (
+        <div class="flex items-center gap-1 rounded-lg border border-[rgb(var(--forge-steel))/0.4] bg-black/20 dark:bg-[rgb(var(--forge-steel))/0.15] px-2 py-1">
+          <button
+            type="button"
+            class="rounded px-2 py-1 text-[rgb(var(--fg))] hover:bg-white/5 dark:hover:bg-white/10 disabled:opacity-30"
+            onClick={props.onUndo}
+            disabled={!props.onUndo}
+            title="Undo (Cmd+Z)"
+          >
+            ↶
+          </button>
+          <button
+            type="button"
+            class="rounded px-2 py-1 text-[rgb(var(--fg))] hover:bg-white/5 dark:hover:bg-white/10 disabled:opacity-30"
+            onClick={props.onRedo}
+            disabled={!props.onRedo}
+            title="Redo (Cmd+Shift+Z)"
+          >
+            ↷
+          </button>
+        </div>
+      )}
     </div>
   );
 }

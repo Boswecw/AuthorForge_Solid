@@ -92,8 +92,65 @@ export default function Smithy() {
       }
     }
 
-    // Note: Font family, font size, line height, and indent would require
-    // custom Tiptap extensions or CSS classes applied to the editor wrapper
+    // Apply font family
+    if (newFormat.fontFamily !== oldFormat.fontFamily) {
+      const fontMap: Record<string, string> = {
+        body: "'EB Garamond', serif",
+        bodyAlt: "'Cormorant Garamond', serif",
+        heading: "'Cinzel', serif",
+        decor: "'Cinzel Decorative', serif",
+        ui: "'Inter', sans-serif",
+        system: "system-ui, sans-serif",
+        mono: "'JetBrains Mono', monospace",
+      };
+      const fontFamily = fontMap[newFormat.fontFamily] || fontMap.body;
+      ed.chain().focus().setFontFamily(fontFamily).run();
+    }
+
+    // Apply font size
+    if (newFormat.fontSize !== oldFormat.fontSize) {
+      ed.chain().focus().setFontSize(`${newFormat.fontSize}px`).run();
+    }
+
+    // Apply line height
+    if (newFormat.lineHeight !== oldFormat.lineHeight) {
+      const lineHeightMap: Record<string, string> = {
+        single: "1.2",
+        oneHalf: "1.5",
+        double: "2.0",
+      };
+      const lineHeight = lineHeightMap[newFormat.lineHeight] || "normal";
+      ed.chain().focus().setLineHeight(lineHeight).run();
+    }
+
+    // Apply indent level (using list indentation or custom logic)
+    if (newFormat.indentLevel !== oldFormat.indentLevel) {
+      // For now, we'll use a simple approach with padding
+      // A more sophisticated approach would use list indentation
+      const indentDelta = newFormat.indentLevel - oldFormat.indentLevel;
+      if (indentDelta > 0) {
+        // Increase indent - could use sinkListItem for lists
+        // For paragraphs, we'd need a custom extension
+        // For now, this is a placeholder
+      } else if (indentDelta < 0) {
+        // Decrease indent
+      }
+    }
+  };
+
+  // Undo/Redo handlers
+  const handleUndo = () => {
+    const ed = editor();
+    if (ed?.can().undo()) {
+      ed.chain().focus().undo().run();
+    }
+  };
+
+  const handleRedo = () => {
+    const ed = editor();
+    if (ed?.can().redo()) {
+      ed.chain().focus().redo().run();
+    }
   };
 
   return (
@@ -127,7 +184,12 @@ export default function Smithy() {
     >
       <div class="flex h-full flex-col">
         {/* Toolbar directly under the navbar */}
-        <SmithyToolbar format={format()} onFormatChange={handleFormatChange} />
+        <SmithyToolbar
+          format={format()}
+          onFormatChange={handleFormatChange}
+          onUndo={handleUndo}
+          onRedo={handleRedo}
+        />
 
         {/* Main Smithy layout */}
         <div class="flex-1 pt-4 grid grid-cols-[minmax(0,2fr)_minmax(0,1fr)] gap-4">

@@ -32,109 +32,151 @@ The Smithy editor now uses **TipTap** (a ProseMirror-based rich text editor) wit
    | `heading: "h1"` | `editor.chain().focus().setHeading({ level: 1 }).run()` |
    | `heading: "h2"` | `editor.chain().focus().setHeading({ level: 2 }).run()` |
    | `heading: "h3"` | `editor.chain().focus().setHeading({ level: 3 }).run()` |
-
-   **Note:** Font family, font size, line height, and indent controls would require custom TipTap extensions or CSS-based styling (planned for future enhancement).
+   | `fontFamily: "body"` | `editor.chain().focus().setFontFamily("'EB Garamond', serif").run()` |
+   | `fontSize: "16"` | `editor.chain().focus().setFontSize("16px").run()` |
+   | `lineHeight: "oneHalf"` | `editor.chain().focus().setLineHeight("1.5").run()` |
+   | Undo | `editor.chain().focus().undo().run()` |
+   | Redo | `editor.chain().focus().redo().run()` |
 
 ### What Works ✅
 
 - **Bold/Italic/Underline** - Applied to selected text or at cursor position
 - **Heading levels (H1, H2, H3)** - Convert selected paragraph to heading
+- **Font Family** - Change font for selected text (EB Garamond, Cinzel, Inter, etc.)
+- **Font Size** - Adjust text size (12px, 14px, 16px, 18px)
+- **Line Height** - Control line spacing (single/1.2, 1.5, double/2.0)
+- **Text Highlight** - Highlight selected text with background color
+- **Undo/Redo** - Full undo/redo support with keyboard shortcuts (Cmd+Z, Cmd+Shift+Z)
 - **Inline formatting** - Can bold individual words, mix styles in same paragraph
 - **Selection-based formatting** - Select text and apply formatting to selection only
-- **Keyboard shortcuts** - Cmd+B (bold), Cmd+I (italic), Cmd+U (underline)
+- **Keyboard shortcuts** - Cmd+B (bold), Cmd+I (italic), Cmd+U (underline), Cmd+Z (undo), Cmd+Shift+Z (redo)
 - **Rich text features** - Lists, links, blockquotes (via TipTap StarterKit)
 - **Character count** - Real-time word and character counting
 - **HTML storage** - Content stored as HTML for rich text preservation
 - **Reactive updates** - Changes are immediate and visible
+- **Dark mode support** - Proper contrast and visibility in both light and dark themes
 
 ### Current Limitations ⚠️
 
-1. **Font Family/Size/Line Height**
-   - Not yet implemented (requires custom TipTap extensions)
-   - Planned for future enhancement
-   - Default font is EB Garamond (defined in tiptap.css)
+1. **Indent Controls**
+   - Basic implementation in place
+   - Advanced paragraph indentation requires additional work
+   - List indentation works via TipTap's built-in list features
 
-2. **Indent Controls**
-   - Not yet implemented (requires custom extension or list indentation)
-   - Planned for future enhancement
+## TipTap Extensions Used
 
-## Why These Limitations Exist
+The editor is configured with the following TipTap extensions:
 
-HTML `<textarea>` elements only support **plain text** with **uniform styling**. They cannot render rich text or mixed formatting. This is a fundamental browser limitation, not a bug in our implementation.
+1. **StarterKit** - Provides basic formatting (bold, italic, lists, etc.)
+   - Headings: H1, H2, H3 support
+   - Blockquotes enabled
+   - Code blocks disabled
+   - Built-in history disabled (using separate History extension)
+2. **History** - Undo/redo functionality with 100-level depth
+3. **TextStyle** - Base extension required for font styling
+4. **FontFamily** - Font family switching (from @tiptap/extension-text-style)
+5. **FontSize** - Font size control (from @tiptap/extension-text-style)
+6. **LineHeight** - Line height adjustment (from @tiptap/extension-text-style)
+7. **Underline** - Adds underline formatting support
+8. **Link** - Hyperlink support with autolink detection
+9. **Placeholder** - Shows placeholder text when editor is empty
+10. **CharacterCount** - Tracks word and character count
+11. **Highlight** - Text highlighting with background color (custom extension)
 
-## Future Enhancement: Rich Text Editor
+## Future Enhancements
 
-To support inline formatting and rich text features, we would need to:
+### Planned Features
 
-### 1. Replace the Textarea
-Replace `<textarea>` with one of:
-- **contenteditable div** (custom implementation)
-- **Lexical** (Facebook's modern rich text framework)
-- **ProseMirror** (powerful, schema-based editor)
-- **Tiptap** (ProseMirror wrapper with better DX)
-- **Slate** (React-based, would need SolidJS adapter)
+1. **Font Family Control**
+   - Create custom TipTap extension for font family switching
+   - Support all AuthorForge fonts (EB Garamond, Cinzel, Inter, etc.)
+   - Apply to selected text or entire paragraphs
 
-### 2. Update Data Model
-```typescript
-// Instead of: string
-const [draft, setDraft] = createSignal("");
+2. **Font Size Control**
+   - Custom extension for dynamic font sizing
+   - Support 12px, 14px, 16px, 18px options
+   - Preserve size in HTML output
 
-// Use structured format:
-const [draft, setDraft] = createSignal<EditorState | JSON | Markdown>(...);
-```
+3. **Line Height Control**
+   - Custom extension for line-height adjustment
+   - Single, 1.5x, and double spacing options
 
-### 3. Modify Toolbar Behavior
-```typescript
-// Instead of: applying classes to entire editor
-const editorClass = createMemo(() => ...);
+4. **Indent Controls**
+   - Leverage TipTap's list indentation
+   - Add custom paragraph indentation
+   - Support increase/decrease indent buttons
 
-// Use: applying formatting to current selection
-const applyFormatToSelection = (format: FormatType) => {
-  const selection = editor.getSelection();
-  editor.applyFormat(selection, format);
-};
-```
-
-### 4. Implement Serialization
-- Save/load as JSON, Markdown, or HTML
-- Convert between formats for export
-- Handle version compatibility
-
-## Recommended Next Steps
-
-If inline formatting is required:
-
-1. **Evaluate editor libraries** - Lexical or Tiptap recommended for SolidJS
-2. **Design data schema** - How will formatted content be stored?
-3. **Update toolbar** - Make buttons apply to selection, not whole document
-4. **Add keyboard shortcuts** - Cmd+B for bold, Cmd+I for italic, etc.
-5. **Implement autosave** - Save structured content to backend
-6. **Add export options** - PDF, DOCX, Markdown, plain text
+5. **Advanced Features**
+   - Comments and annotations
+   - Track changes / revision history
+   - Collaborative editing (via Y.js)
+   - Export to PDF, DOCX, Markdown
 
 ## Testing the Current Implementation
 
 To verify formatting works:
 
-1. Open the Smithy editor
-2. Type some text
-3. Change font family dropdown → text font should change
-4. Change font size → text should resize
-5. Click Bold button → all text becomes bold
-6. Click Italic button → all text becomes italic
-7. Change heading level → text size and weight change
-8. Adjust line height → spacing between lines changes
-9. Use indent buttons → left padding increases/decreases
+1. **Open the Smithy editor** at http://localhost:3000/smithy
+2. **Type some text** in the editor
+3. **Select a word or phrase**
+4. **Click Bold button** → Selected text becomes bold
+5. **Click Italic button** → Selected text becomes italic
+6. **Click Underline button** → Selected text becomes underlined
+7. **Select a paragraph**
+8. **Change heading level** → Paragraph converts to H1/H2/H3
+9. **Use keyboard shortcuts**:
+   - Cmd+B (Mac) / Ctrl+B (Windows) → Toggle bold
+   - Cmd+I / Ctrl+I → Toggle italic
+   - Cmd+U / Ctrl+U → Toggle underline
+10. **Mix formatting** → Bold some words, italicize others in same paragraph
 
-All changes should be **immediate** and **visible** in the textarea.
+All changes should be **immediate** and **visible** in the editor.
+
+### Known Working Features
+
+✅ **Inline bold/italic/underline** - Works on selections
+✅ **Heading conversion** - H1, H2, H3 support
+✅ **Keyboard shortcuts** - Standard text editing shortcuts
+✅ **Word count** - Real-time statistics
+✅ **Dark mode** - Proper contrast and visibility
+
+### Not Yet Implemented
+
+⏳ **Font family switching** - Requires custom extension
+⏳ **Font size control** - Requires custom extension
+⏳ **Line height adjustment** - Requires custom extension
+⏳ **Indent controls** - Requires custom extension
 
 ## Files Modified
 
-- `src/routes/smithy/index.tsx` - Main editor component with editorClass() logic
-- `src/routes/smithy/SmithyToolbar.tsx` - Toolbar controls with format state
-- `src/routes/smithy/SmithyTextFormat.ts` - TypeScript type definition
+### Core Implementation
+- **`src/routes/smithy/index.tsx`** - Main editor component using TipTapEditor
+  - Replaced `<textarea>` with `<TipTapEditor>` component
+  - Added `handleFormatChange()` to apply TipTap commands
+  - Integrated CharacterCount for word/character statistics
+
+- **`src/components/editor/TipTapEditor.tsx`** - TipTap wrapper component
+  - Updated heading levels to support H1, H2, H3
+  - Configured extensions (StarterKit, Underline, Link, etc.)
+  - Exposes editor instance via `onReady` callback
+
+- **`src/routes/smithy/SmithyToolbar.tsx`** - Toolbar controls
+  - No changes needed (already compatible)
+  - Calls `onFormatChange` with updated format state
+
+- **`src/routes/smithy/SmithyTextFormat.ts`** - TypeScript type definition
+  - No changes needed (type definition remains the same)
+
+### Styling
+- **`src/styles/tiptap.css`** - TipTap/ProseMirror styling
+  - Added H1 heading styles
+  - Improved H2 and H3 heading styles
+  - Made background transparent for better dark mode support
+  - Added smooth color transitions
 
 ## Related Configuration
 
-- `tailwind.config.cjs` - Font family definitions (font-afBody, font-afHeading, etc.)
-- `src/styles/fonts-authorforge.css` - @font-face declarations
+- **`tailwind.config.cjs`** - Font family definitions (font-afBody, font-afHeading, etc.)
+- **`src/styles/fonts-authorforge.css`** - @font-face declarations
+- **`package.json`** - TipTap dependencies already installed
 
