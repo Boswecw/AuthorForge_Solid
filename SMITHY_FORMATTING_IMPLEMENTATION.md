@@ -3,6 +3,51 @@
 ## Overview
 This document describes how the SmithyToolbar formatting controls work with the TipTap rich text editor.
 
+## Recent Fixes: Duplicate Extension Errors
+
+### Fix 1: Duplicate History Plugin Error
+
+**Issue**: RangeError "Adding different instances of a keyed plugin (history$)" from ProseMirror's state management.
+
+**Root Cause**: We were importing and registering the `@tiptap/extension-history` package as a separate extension while also having StarterKit's built-in history plugin. ProseMirror doesn't allow the same keyed plugin to be registered twice.
+
+**Solution**:
+- Removed the separate `@tiptap/extension-history` import
+- Configured StarterKit's built-in history with custom settings:
+  ```typescript
+  StarterKit.configure({
+    history: {
+      depth: 100,
+      newGroupDelay: 500,
+    },
+  })
+  ```
+- Uninstalled the `@tiptap/extension-history` package (no longer needed)
+
+**Result**: Undo/redo functionality works perfectly using StarterKit's built-in history extension.
+
+### Fix 2: Duplicate Link and Underline Extensions
+
+**Issue**: TipTap warning "Duplicate extension names found: ['link', 'underline']"
+
+**Root Cause**: We were importing and registering `@tiptap/extension-link` and `@tiptap/extension-underline` as separate extensions, but **StarterKit already includes both Link and Underline extensions by default**.
+
+**Solution**:
+- Removed separate `Link` and `Underline` imports
+- Configured Link and Underline within StarterKit configuration:
+  ```typescript
+  StarterKit.configure({
+    link: {
+      openOnClick: false,
+      autolink: true,
+    },
+    underline: {},
+  })
+  ```
+- Uninstalled `@tiptap/extension-link` and `@tiptap/extension-underline` packages (no longer needed)
+
+**Result**: No more duplicate extension warnings. Link and Underline functionality works perfectly using StarterKit's built-in extensions.
+
 ## Current Implementation (Updated)
 
 ### Architecture
@@ -67,21 +112,34 @@ The Smithy editor now uses **TipTap** (a ProseMirror-based rich text editor) wit
 
 The editor is configured with the following TipTap extensions:
 
-1. **StarterKit** - Provides basic formatting (bold, italic, lists, etc.)
-   - Headings: H1, H2, H3 support
-   - Blockquotes enabled
-   - Code blocks disabled
-   - Built-in history disabled (using separate History extension)
-2. **History** - Undo/redo functionality with 100-level depth
-3. **TextStyle** - Base extension required for font styling
-4. **FontFamily** - Font family switching (from @tiptap/extension-text-style)
-5. **FontSize** - Font size control (from @tiptap/extension-text-style)
-6. **LineHeight** - Line height adjustment (from @tiptap/extension-text-style)
-7. **Underline** - Adds underline formatting support
-8. **Link** - Hyperlink support with autolink detection
-9. **Placeholder** - Shows placeholder text when editor is empty
-10. **CharacterCount** - Tracks word and character count
-11. **Highlight** - Text highlighting with background color (custom extension)
+1. **StarterKit** - Provides comprehensive basic formatting
+   - **Bold** - Bold text formatting (Cmd+B)
+   - **Italic** - Italic text formatting (Cmd+I)
+   - **Strike** - Strikethrough text
+   - **Code** - Inline code formatting
+   - **Paragraph** - Paragraph nodes
+   - **Headings** - H1, H2, H3 support (configured)
+   - **Blockquote** - Block quotes (enabled)
+   - **Code Block** - Code blocks (disabled)
+   - **Bullet List** - Unordered lists
+   - **Ordered List** - Numbered lists
+   - **List Item** - List item nodes
+   - **Hard Break** - Line breaks
+   - **Horizontal Rule** - Horizontal dividers
+   - **History** - Undo/redo with 100-level depth and 500ms grouping delay (configured)
+   - **Link** - Hyperlinks with autolink detection (configured: openOnClick: false, autolink: true)
+   - **Underline** - Underline formatting (Cmd+U) (configured)
+   - **Document** - Root document node
+   - **Text** - Text nodes
+   - **Dropcursor** - Visual cursor when dragging
+   - **Gapcursor** - Cursor for empty nodes
+2. **TextStyle** - Base extension required for font styling (from @tiptap/extension-text-style)
+3. **FontFamily** - Font family switching (from @tiptap/extension-text-style)
+4. **FontSize** - Font size control (from @tiptap/extension-text-style)
+5. **LineHeight** - Line height adjustment (from @tiptap/extension-text-style)
+6. **Placeholder** - Shows placeholder text when editor is empty (from @tiptap/extension-placeholder)
+7. **CharacterCount** - Tracks word and character count (from @tiptap/extension-character-count)
+8. **Highlight** - Text highlighting with background color (custom extension in `src/components/editor/extensions/Highlight.ts`)
 
 ## Future Enhancements
 

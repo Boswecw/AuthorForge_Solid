@@ -1,6 +1,7 @@
 import { Router } from "@solidjs/router";
 import { FileRoutes } from "@solidjs/start/router";
-import { Suspense } from "solid-js";
+import { Suspense, onMount } from "solid-js";
+import { useFontScale } from "~/state/fontScale";
 
 
 /* --- Global Style Imports --- */
@@ -15,14 +16,20 @@ import "./app.css";
 
 /* --- Main App --- */
 export default function App() {
+  // Initialize font scale on mount
+  const { fontScaleKey } = useFontScale();
+
+  onMount(() => {
+    // Font scale is automatically applied via createEffect in fontScale.ts
+    console.log("Font scale initialized:", fontScaleKey());
+  });
+
   return (
     <Router
       root={(props) => (
-        <>
-          <main class="min-h-screen bg-[rgb(var(--bg))] text-[rgb(var(--fg))] transition-colors duration-300">
-            <Suspense>{props.children}</Suspense>
-          </main>
-        </>
+        <main class="min-h-screen bg-[rgb(var(--bg))] text-[rgb(var(--fg))] transition-colors duration-300">
+          <Suspense>{props.children}</Suspense>
+        </main>
       )}
     >
       <FileRoutes />

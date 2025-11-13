@@ -182,81 +182,97 @@ export default function Smithy() {
         </div>
       }
     >
-      <div class="flex h-full flex-col">
-        {/* Toolbar directly under the navbar */}
-        <SmithyToolbar
-          format={format()}
-          onFormatChange={handleFormatChange}
-          onUndo={handleUndo}
-          onRedo={handleRedo}
-        />
+      {(railState) => (
+        <div class="flex h-full flex-col">
+          {/* Toolbar directly under the navbar */}
+          <SmithyToolbar
+            format={format()}
+            onFormatChange={handleFormatChange}
+            onUndo={handleUndo}
+            onRedo={handleRedo}
+          />
 
-        {/* Main Smithy layout */}
-        <div class="flex-1 pt-4 grid grid-cols-[minmax(0,2fr)_minmax(0,1fr)] gap-4">
-          {/* LEFT: Writing area */}
-          <section
-            class="rounded-2xl border border-[rgb(var(--forge-steel))/0.3]
-                   bg-[rgb(var(--bg))]/0.95 shadow-af-soft flex flex-col"
+          {/* Main Smithy layout - responsive to rail state */}
+          <div
+            class="flex-1 pt-4 grid gap-4 transition-all duration-300"
+            classList={{
+              // Both rails open: normal 2:1 ratio
+              "grid-cols-[minmax(0,2fr)_minmax(0,1fr)]": railState.leftOpen && railState.rightOpen,
+              // Left rail closed, right open: wider editor with stats
+              "grid-cols-[minmax(0,3fr)_minmax(0,1fr)]": !railState.leftOpen && railState.rightOpen,
+              // Left rail open, right closed: just editor (stats hidden)
+              "grid-cols-1": railState.leftOpen && !railState.rightOpen,
+              // Both rails closed: full width editor
+              "max-w-none": !railState.leftOpen && !railState.rightOpen,
+            }}
           >
-            <div class="flex items-center justify-between border-b border-[rgb(var(--forge-steel))/0.25] px-4 py-2 text-xs">
-              <div class="space-y-1">
-                <div class="text-[0.7rem] uppercase tracking-[0.18em] text-[rgb(var(--forge-brass))]/80">
-                  Scene
+            {/* LEFT: Writing area */}
+            <section
+              class="rounded-2xl border border-[rgb(var(--forge-steel))/0.3]
+                     bg-[rgb(var(--bg))]/0.95 shadow-af-soft flex flex-col transition-all duration-300"
+            >
+              <div class="flex items-center justify-between border-b border-[rgb(var(--forge-steel))/0.25] px-4 py-2 text-xs">
+                <div class="space-y-1">
+                  <div class="text-[0.7rem] uppercase tracking-[0.18em] text-[rgb(var(--forge-brass))]/80">
+                    Scene
+                  </div>
+                  <div class="text-sm font-medium">{activeTitle()}</div>
                 </div>
-                <div class="text-sm font-medium">{activeTitle()}</div>
+                <div class="flex items-center gap-2">
+                  <span class="rounded-full bg-emerald-500/15 px-2 py-0.5 text-[0.65rem] text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-300">
+                    Autosave
+                  </span>
+                </div>
               </div>
-              <div class="flex items-center gap-2">
-                <span class="rounded-full bg-emerald-500/15 px-2 py-0.5 text-[0.65rem] text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-300">
-                  Autosave
-                </span>
-              </div>
-            </div>
 
-            <div class="flex-1 overflow-y-auto">
-              <TipTapEditor
-                placeholder="Write your scene here. Use the toolbar to format selected text."
-                onReady={(ed) => setEditor(ed)}
-                class="min-h-[calc(100vh-16rem)]"
-              />
-            </div>
+              <div class="flex-1 overflow-y-auto">
+                <TipTapEditor
+                  placeholder="Write your scene here. Use the toolbar to format selected text."
+                  onReady={(ed) => setEditor(ed)}
+                  class="min-h-[calc(100vh-16rem)]"
+                />
+              </div>
 
-            <div class="flex items-center justify-between border-t border-[rgb(var(--forge-steel))/0.25] px-4 py-2 text-[0.7rem] text-[rgb(var(--muted))]">
-              <span>Ln 1, Col 1</span>
-              <span>{stats().words} words • Draft v0</span>
-            </div>
-          </section>
+              <div class="flex items-center justify-between border-t border-[rgb(var(--forge-steel))/0.25] px-4 py-2 text-[0.7rem] text-[rgb(var(--muted))]">
+                <span>Ln 1, Col 1</span>
+                <span>{stats().words} words • Draft v0</span>
+              </div>
+            </section>
 
-          {/* RIGHT: Stats panel */}
-          <section
-            class="rounded-2xl border border-[rgb(var(--forge-steel))/0.3]
-                   bg-[rgb(var(--bg))]/0.9 p-4 text-xs"
-          >
-            <div class="text-[0.7rem] uppercase tracking-[0.18em] text-[rgb(var(--forge-brass))]/80 mb-2">
-              Stats
-            </div>
-            <div class="space-y-2">
-              <div class="flex items-center justify-between">
-                <span>Words</span>
-                <span class="font-mono text-[0.8rem]">{stats().words}</span>
-              </div>
-              <div class="flex items-center justify-between">
-                <span>Characters</span>
-                <span class="font-mono text-[0.8rem]">{stats().chars}</span>
-              </div>
-              <div class="flex items-center justify-between">
-                <span>Paragraphs</span>
-                <span class="font-mono text-[0.8rem]">{stats().paragraphs}</span>
-              </div>
-              <div class="flex items-center justify-between">
-                <span>Read time</span>
-                <span class="font-mono text-[0.8rem]">
-                  {stats().readingMinutes} min
-                </span>
-              </div>
-            </div>
-          </section>
+            {/* RIGHT: Stats panel - only show when right rail is open */}
+            {railState.rightOpen && (
+              <section
+                class="rounded-2xl border border-[rgb(var(--forge-steel))/0.3]
+                       bg-[rgb(var(--bg))]/0.9 p-4 text-xs transition-all duration-300"
+              >
+                <div class="text-[0.7rem] uppercase tracking-[0.18em] text-[rgb(var(--forge-brass))]/80 mb-2">
+                  Stats
+                </div>
+                <div class="space-y-2">
+                  <div class="flex items-center justify-between">
+                    <span>Words</span>
+                    <span class="font-mono text-[0.8rem]">{stats().words}</span>
+                  </div>
+                  <div class="flex items-center justify-between">
+                    <span>Characters</span>
+                    <span class="font-mono text-[0.8rem]">{stats().chars}</span>
+                  </div>
+                  <div class="flex items-center justify-between">
+                    <span>Paragraphs</span>
+                    <span class="font-mono text-[0.8rem]">{stats().paragraphs}</span>
+                  </div>
+                  <div class="flex items-center justify-between">
+                    <span>Read time</span>
+                    <span class="font-mono text-[0.8rem]">
+                      {stats().readingMinutes} min
+                    </span>
+                  </div>
+                </div>
+              </section>
+            )}
+          </div>
         </div>
-      </div>
+      )}
     </ForgeShell>
   );
 }

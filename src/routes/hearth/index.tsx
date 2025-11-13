@@ -1,5 +1,6 @@
 import { A } from "@solidjs/router";
 import ForgeShell from "~/components/ForgeShell";
+import { FontSizeControl } from "./FontSizeControl";
 
 const recentProjects = [
   { id: "p1", name: "Faith in a FireStorm", progress: 0.62, updatedAt: "2025-11-10" },
@@ -32,10 +33,22 @@ export default function Hearth() {
   return (
     <ForgeShell title="Hearth" rightPanel={Right}>
       <div class="mx-auto max-w-6xl">
-        {/* Welcome */}
-        <header class="mb-6">
-          <h1 class="text-2xl font-semibold tracking-wide">Welcome back to the Hearth</h1>
-          <p class="text-neutral-600 dark:text-neutral-400">Pick up where you left off, or jump into a new project.</p>
+        {/* Welcome Header with Font Size Control */}
+        <header class="mb-6 flex items-start justify-between">
+          <div>
+            <h1 class="text-3xl font-display font-semibold text-[rgb(var(--fg))]">
+              Welcome back to the Hearth
+            </h1>
+            <p class="text-sm text-[rgb(var(--fg))]/70 mt-1">
+              Pick up where you left off, or jump into a new project.
+            </p>
+          </div>
+          <div class="flex flex-col items-end gap-1.5">
+            <FontSizeControl />
+            <p class="text-xs text-[rgb(var(--fg))]/60 italic max-w-[16rem] text-right">
+              Adjusts text size across all pages. Your preference is saved automatically.
+            </p>
+          </div>
         </header>
 
         {/* Continue Writing */}

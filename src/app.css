@@ -31,7 +31,21 @@
    --------------------------------------------------------------------- */
 
 /* Make dark/light switch hints to the browser for form controls, etc. */
-:root { color-scheme: light dark; }
+:root {
+  color-scheme: light dark;
+  /* Global font scale system - default value, overridden by fontScale.ts */
+  --font-scale: 1;
+}
+
+/* Apply font scaling to html element - affects all rem-based sizing */
+html {
+  font-size: calc(16px * var(--font-scale));
+}
+
+/* Ensure body inherits the scaled font size */
+body {
+  font-size: 1rem; /* This will be scaled by the html font-size */
+}
 
 /* Smooth theme flips without violating reduced-motion preferences. */
 .theme-transition * {

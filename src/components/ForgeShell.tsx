@@ -9,7 +9,7 @@ type ForgeShellProps = {
   leftPanel?: JSX.Element;
   /** Optional right panel (context, metadata, etc.). */
   rightPanel?: JSX.Element;
-  children: JSX.Element;
+  children: JSX.Element | ((railState: { leftOpen: boolean; rightOpen: boolean }) => JSX.Element);
 };
 
 export default function ForgeShell(props: ForgeShellProps) {
@@ -86,7 +86,9 @@ export default function ForgeShell(props: ForgeShellProps) {
 
         {/* MAIN CANVAS */}
         <main id="main" class="min-h-[calc(100vh-3.5rem)] p-6">
-          {props.children}
+          {typeof props.children === "function"
+            ? props.children({ leftOpen: leftOpen(), rightOpen: rightOpen() })
+            : props.children}
         </main>
 
         {/* RIGHT RAIL */}
