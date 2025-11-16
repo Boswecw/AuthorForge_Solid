@@ -1,0 +1,14 @@
+/* Minimal prose tweaks for Help page */
+.prose-help h1,
+.prose-help h2,
+.prose-help h3 {
+  color: rgb(251 191 36); /* amber-400 */
+}
+.prose-help a {
+  color: rgb(96 165 250); /* blue-400 */
+}
+.prose-help pre {
+  background: rgba(30, 41, 59, 0.6); /* slate-800/60 */
+  border: 1px solid rgb(51 65 85); /* slate-700 */
+  border-radius: 0.5rem;
+}

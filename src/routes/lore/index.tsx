@@ -1,5 +1,6 @@
 // src/routes/lore/index.tsx
 import { createMemo, createSignal, For, Show, onMount } from "solid-js";
+import { isServer } from "solid-js/web";
 import ForgeShell from "~/components/ForgeShell";
 import LoreGraph from "~/components/LoreGraph";
 import { kindTheme } from "~/lib/lore/colors";
@@ -139,8 +140,16 @@ export default function LorePage() {
   const [error, setError] = createSignal<string | null>(null);
   const [filter, setFilter] = createSignal("All");
   const [selected, setSelected] = createSignal<EntityHit | null>(null);
+  // Initialize activeTab to "results" consistently on both server and client
   const [activeTab, setActiveTab] = createSignal<"results" | "graph" | "yaml">("results");
   const [viewingEntity, setViewingEntity] = createSignal<string | null>(null);
+  // Track if component is mounted (client-side only)
+  const [isMounted, setIsMounted] = createSignal(false);
+
+  // Set mounted flag on client
+  onMount(() => {
+    setIsMounted(true);
+  });
 
   async function parseLore() {
     setLoading(true);
@@ -273,7 +282,7 @@ ${h.kind}:
   return (
     <ForgeShell title="Lore" rightPanel={RightPanel}>
       {/* Input row */}
-      <div class="border rounded-xl2 border-[rgb(var(--forge-steel))/0.3] bg-[rgb(var(--bg))]/0.8 shadow-card p-3 mb-4">
+      <div class="border rounded-xl border-[rgb(var(--forge-steel))/0.3] bg-[rgb(var(--bg))]/0.8 shadow-card p-3 mb-4">
         <div class="flex items-center gap-3">
           <textarea
             value={text()}
@@ -299,7 +308,7 @@ ${h.kind}:
         <TabBtn active={activeTab() === "yaml"} onClick={() => setActiveTab("yaml")}>YAML Editor</TabBtn>
       </div>
 
-      <div class="rounded-xl2 border border-[rgb(var(--forge-steel))/0.3] bg-[rgb(var(--bg))]/0.8 shadow-card min-h-[24rem]">
+      <div class="rounded-xl border border-[rgb(var(--forge-steel))/0.3] bg-[rgb(var(--bg))]/0.8 shadow-card min-h-[24rem]">
         <Show when={activeTab() === "results"}>
           <div class="p-4 space-y-2 max-h-[60vh] overflow-y-auto">
             <For each={filteredHits()}>
@@ -341,9 +350,18 @@ ${h.kind}:
         </Show>
 
         <Show when={activeTab() === "graph"}>
-          <div class="h-[60vh] p-3">
-            <LoreGraph text={text()} hits={hits() as any} />
-          </div>
+          {/* Only render LoreGraph on client after mount to avoid SSR hydration mismatch */}
+          <Show when={!isServer && isMounted()} fallback={
+            <div class="h-[60vh] p-3 flex items-center justify-center">
+              <div class="text-center opacity-50">
+                <p class="text-sm">Loading graph visualization...</p>
+              </div>
+            </div>
+          }>
+            <div class="h-[60vh] p-3">
+              <LoreGraph text={text()} hits={hits() as any} />
+            </div>
+          </Show>
         </Show>
 
         <Show when={activeTab() === "yaml"}>

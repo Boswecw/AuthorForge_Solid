@@ -2,6 +2,7 @@ import { Router } from "@solidjs/router";
 import { FileRoutes } from "@solidjs/start/router";
 import { Suspense, onMount } from "solid-js";
 import { useFontScale } from "~/state/fontScale";
+import { ToastContainer } from "~/components/ToastContainer";
 
 
 /* --- Global Style Imports --- */
@@ -27,9 +28,12 @@ export default function App() {
   return (
     <Router
       root={(props) => (
-        <main class="min-h-screen bg-[rgb(var(--bg))] text-[rgb(var(--fg))] transition-colors duration-300">
-          <Suspense>{props.children}</Suspense>
-        </main>
+        <>
+          <main class="min-h-screen bg-[rgb(var(--bg))] text-[rgb(var(--fg))] transition-colors duration-300">
+            <Suspense>{props.children}</Suspense>
+          </main>
+          <ToastContainer />
+        </>
       )}
     >
       <FileRoutes />

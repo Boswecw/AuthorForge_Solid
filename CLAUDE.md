@@ -16,6 +16,8 @@ Foundry = The project and asset management layer — where users create or impor
 
 Bloom = Output or publishing stage (rendering, exports, deployment, visualizations).
 
+Tempering = Export refinement and formatting — where users configure export profiles, validate content, manage assets, and preview formatted output before final export (EPUB, PDF, DOCX, Markdown).
+
 Lore = Worldbuilding and reference database (characters, places, histories, etc.).
 
 Boundary = The contextual AI environment — handles parsing, context injection, and story logic limits.
@@ -26,7 +28,7 @@ Ember = Settings and themes (user preferences, dark/light toggle, account, etc.)
 
 UI Hierarchy:
 
-Primary Nav (Top or Left Rail) → Displays the major workspace icons (Hearth, Anvil, Smithy, Lore, Foundry, Bloom, Ember).
+Primary Nav (Top or Left Rail) → Displays the major workspace icons (Hearth, Foundry, Smithy, Anvil, Lore, Bloom, Tempering, Boundary, Ember).
 
 Secondary Nav (Breadcrumb / Context Bar) → Shows location within current workspace, e.g.
 Anvil / Character Arcs / Rawn Mortisimus

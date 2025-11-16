@@ -1,4 +1,6 @@
 import { createSignal, For, Show } from "solid-js";
+import { A } from "@solidjs/router";
+import { Home, ArrowLeft } from "lucide-solid";
 import ForgeShell from "~/components/ForgeShell";
 
 type Project = {
@@ -38,6 +40,16 @@ export default function Foundry() {
   const Right = (
     <div class="space-y-4">
       <section>
+        <h4 class="font-semibold mb-2 text-[rgb(var(--forge-brass))]">About the Foundry</h4>
+        <p class="text-[0.925rem] opacity-90 mb-3">
+          This is your <strong>project workshop</strong>. Use it to create, import, and manage your writing projects.
+        </p>
+        <p class="text-[0.925rem] opacity-80">
+          Return to <A href="/" class="text-[rgb(var(--forge-brass))] hover:underline">the Hearth</A> for quick access to continue writing.
+        </p>
+      </section>
+
+      <section>
         <h4 class="font-semibold mb-1">Foundry flow</h4>
         <ol class="ml-5 list-decimal space-y-1 text-[0.925rem] opacity-90">
           <li>Drop DOCX/MD/PDF.</li>
@@ -46,6 +58,7 @@ export default function Foundry() {
           <li>Open in Smithy to write.</li>
         </ol>
       </section>
+
       <section>
         <h4 class="font-semibold mb-1">Tips</h4>
         <ul class="ml-5 list-disc space-y-1 text-[0.925rem] opacity-90">
@@ -63,6 +76,7 @@ export default function Foundry() {
     if (dropped.length) {
       setFiles(dropped);
       setStage("parsing");
+      // Simulate pipeline; you’ll replace with tauri command invocations
       setTimeout(() => setStage("indexing"), 600);
       setTimeout(() => setStage("ready"), 1600);
     }
@@ -81,10 +95,26 @@ export default function Foundry() {
 
   return (
     <ForgeShell title="Foundry" rightPanel={Right}>
+      {/* Breadcrumb Navigation */}
+      <div class="mb-4">
+        <A
+          href="/"
+          class="inline-flex items-center gap-2 text-sm text-[rgb(var(--forge-brass))] hover:underline"
+        >
+          <ArrowLeft class="w-4 h-4" />
+          Back to Hearth
+        </A>
+      </div>
+
+      {/* Header */}
       <header class="mb-6 flex items-center justify-between">
         <div>
-          <h1 class="font-display text-2xl tracking-wide">The Foundry</h1>
-          <p class="text-sm opacity-80">Create projects, import manuscripts, and build your index.</p>
+          <h1 class="font-cinzel-decorative text-3xl tracking-wide text-[rgb(var(--fg))]">
+            THE FOUNDRY
+          </h1>
+          <p class="text-sm opacity-80 mt-1">
+            Create projects, import manuscripts, and build your index.
+          </p>
         </div>
         <div class="flex gap-2">
           <button
@@ -102,6 +132,7 @@ export default function Foundry() {
         </div>
       </header>
 
+      {/* Tabs */}
       <div class="mb-4 flex items-center gap-2">
         <TabButton active={tab() === "ingest"} onClick={() => setTab("ingest")}>
           Ingest
@@ -111,14 +142,16 @@ export default function Foundry() {
         </TabButton>
       </div>
 
+      {/* TAB: Ingest */}
       <Show when={tab() === "ingest"}>
         <section
           class="rounded-xl2 border border-[rgb(var(--forge-steel))/0.3] bg-white/60 dark:bg-white/5 p-5
                  shadow-card"
         >
           <h2 class="text-lg font-semibold mb-2">Import files</h2>
-          <p class="text-sm opacity-80 mb-4">Drop DOCX, MD, or PDF. We'll parse into chapters and index them.</p>
+          <p class="text-sm opacity-80 mb-4">Drop DOCX, MD, or PDF. We’ll parse into chapters and index them.</p>
 
+          {/* Dropzone */}
           <div
             onDragOver={(e) => e.preventDefault()}
             onDrop={onDrop as any}
@@ -137,9 +170,54 @@ export default function Foundry() {
               </label>
             </div>
           </div>
+
+          {/* Selected files */}
+          <Show when={files().length > 0}>
+            <div class="mt-5">
+              <h3 class="font-semibold text-sm mb-2">Selected</h3>
+              <ul class="rounded-md border border-[rgb(var(--forge-steel))/0.25] divide-y divide-[rgb(var(--forge-steel))/0.2]">
+                <For each={files()}>
+                  {(f) => (
+                    <li class="px-3 py-2 text-sm flex items-center justify-between">
+                      <span class="truncate">{f.name}</span>
+                      <span class="opacity-70">{Math.ceil((f.size || 0) / 1024)} KB</span>
+                    </li>
+                  )}
+                </For>
+              </ul>
+            </div>
+          </Show>
+
+          {/* Pipeline progress */}
+          <Show when={files().length > 0}>
+            <div class="mt-6">
+              <h3 class="font-semibold text-sm mb-2">Pipeline</h3>
+              <Pipeline stage={stage()} />
+              <div class="mt-4 flex gap-2">
+                <button
+                  class="rounded-md border px-3 py-2 text-sm hover:bg-white/5"
+                  onClick={() => {
+                    // hook to Tauri: wb_parse_and_chunk + df_build_index
+                    alert("Run parse & index (placeholder)");
+                  }}
+                >
+                  Parse & Index
+                </button>
+                <a
+                  href="/smithy"
+                  class="rounded-md border px-3 py-2 text-sm bg-gradient-to-b from-[rgb(var(--forge-ember))]/20 to-transparent shadow-ember
+                         disabled:opacity-50"
+                  aria-disabled={stage() !== "ready"}
+                >
+                  Open in Smithy
+                </a>
+              </div>
+            </div>
+          </Show>
         </section>
       </Show>
 
+      {/* TAB: Overview */}
       <Show when={tab() === "overview"}>
         <section class="rounded-xl2 border border-[rgb(var(--forge-steel))/0.3] p-5 bg-white/60 dark:bg-white/5 shadow-card">
           <h2 class="text-lg font-semibold mb-4">Projects</h2>
@@ -152,6 +230,21 @@ export default function Foundry() {
                     <span class="text-xs opacity-70">Updated {p.updatedAt}</span>
                   </div>
                   <p class="text-xs mt-1 opacity-80">{p.genres.join(", ")}</p>
+                  <div class="mt-3">
+                    <div class="h-2 w-full rounded bg-[rgb(var(--forge-ash))]/0.7">
+                      <div
+                        class={`h-2 rounded bg-[rgb(var(--forge-brass))]`}
+                        style={{ width: `${p.stats?.indexed ? 100 : 60}%` }}
+                      />
+                    </div>
+                    <div class="mt-1 text-xs text-right">
+                      {p.stats?.indexed ? "Indexed" : "Needs indexing"}
+                    </div>
+                  </div>
+                  <div class="mt-3 flex gap-2">
+                    <a href={`/foundry/${p.id}`} class="rounded-md border px-3 py-2 text-sm hover:bg-white/5">Open</a>
+                    <a href={`/smithy?project=${p.id}`} class="rounded-md border px-3 py-2 text-sm hover:bg-white/5">Open in Smithy</a>
+                  </div>
                 </article>
               )}
             </For>
@@ -178,3 +271,44 @@ function TabButton(props: { active: boolean; onClick?: () => void; children: any
   );
 }
 
+function Pipeline(props: { stage: "idle" | "parsing" | "indexing" | "ready" }) {
+  const steps = [
+    { key: "parsing", label: "Parse" },
+    { key: "indexing", label: "Index" },
+    { key: "ready", label: "Ready" },
+  ] as const;
+
+  const stateRank = { idle: 0, parsing: 1, indexing: 2, ready: 3 }[props.stage];
+
+  return (
+    <ol class="flex items-center gap-3">
+      <For each={steps}>
+        {(s, i) => {
+          const rank = i() + 1;
+          const done = stateRank >= rank;
+          const active = stateRank === rank;
+          return (
+            <li class="flex items-center gap-2">
+              <span
+                class={[
+                  "inline-grid place-items-center h-8 w-8 rounded-full border text-xs",
+                  done
+                    ? "border-white/10 bg-[rgb(var(--forge-ember))]/20 shadow-ember"
+                    : active
+                    ? "border-[rgb(var(--forge-brass))]/50 bg-white/5"
+                    : "border-[rgb(var(--forge-steel))]/40 bg-white/0",
+                ].join(" ")}
+              >
+                {rank}
+              </span>
+              <span class={done ? "font-semibold" : ""}>{s.label}</span>
+              {rank < steps.length && (
+                <span class="mx-2 h-px w-10 bg-[rgb(var(--forge-steel))/0.3]" />
+              )}
+            </li>
+          );
+        }}
+      </For>
+    </ol>
+  );
+}

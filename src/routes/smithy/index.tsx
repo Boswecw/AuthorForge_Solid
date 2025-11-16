@@ -9,19 +9,22 @@
  * - Content stored as HTML for rich text preservation
  * - Full keyboard shortcut support (Cmd+B, Cmd+I, etc.)
  */
-import { createSignal, createMemo } from "solid-js";
+import { createSignal, createMemo, onMount, onCleanup, Show } from "solid-js";
+import { isServer } from "solid-js/web";
 import type { Editor } from "@tiptap/core";
 import ForgeShell from "~/components/ForgeShell";
 import TipTapEditor from "~/components/editor/TipTapEditor";
 import SmithyToolbar from "./SmithyToolbar";
 import type { SmithyTextFormat } from "./SmithyTextFormat";
 import { Binder } from "~/components/Binder";
+import FocusOverlay from "./FocusOverlay";
 
 export default function Smithy() {
   const [activeDocId, setActiveDocId] = createSignal<string | null>(null);
   const [activeTitle, setActiveTitle] = createSignal<string>("Untitled Scene");
   const [html, setHtml] = createSignal("<p></p>");
   const [editor, setEditor] = createSignal<Editor | null>(null);
+  const [focusMode, setFocusMode] = createSignal(false);
 
   // Format state - now used to track current editor state and apply commands
   const [format, setFormat] = createSignal<SmithyTextFormat>({
@@ -153,44 +156,103 @@ export default function Smithy() {
     }
   };
 
+  // Keyboard: F toggles Focus Mode, Esc exits Focus Mode
+  onMount(() => {
+    // SSR guard: window is only available in the browser
+    if (isServer) return;
+
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key.toLowerCase() === "f" && !e.metaKey && !e.ctrlKey && !e.altKey) {
+        // Only toggle if not typing in editor
+        const target = e.target as HTMLElement;
+        if (target.tagName !== "INPUT" && target.tagName !== "TEXTAREA" && !target.isContentEditable) {
+          e.preventDefault();
+          setFocusMode((v) => !v);
+        }
+      }
+      if (e.key === "Escape" && focusMode()) {
+        e.preventDefault();
+        setFocusMode(false);
+      }
+    };
+
+    window.addEventListener("keydown", handleKey);
+
+    onCleanup(() => {
+      window.removeEventListener("keydown", handleKey);
+    });
+  });
+
+  // Get plain text draft from editor for FocusOverlay
+  const getDraft = () => {
+    const ed = editor();
+    return ed?.getText() || "";
+  };
+
+  const handleDraftChange = (value: string) => {
+    const ed = editor();
+    if (ed) {
+      ed.commands.setContent(`<p>${value}</p>`);
+    }
+  };
+
   return (
-    <ForgeShell
-      title="The Smithy"
-      leftPanel={
-        <Binder
-          onSelect={(id: string) => {
-            setActiveDocId(id);
-            setActiveTitle(id || "Untitled Scene");
-          }}
+    <>
+      {/* Focus Mode Overlay */}
+      <Show when={focusMode()}>
+        <FocusOverlay
+          activeTitle={activeTitle()}
+          draft={getDraft()}
+          onDraftChange={handleDraftChange}
+          words={stats().words}
+          chars={stats().chars}
+          paragraphs={stats().paragraphs}
+          readingMinutes={stats().readingMinutes}
+          onExitFocus={() => setFocusMode(false)}
         />
-      }
-      rightPanel={
-        <div class="space-y-3 text-sm">
-          <p class="text-xs uppercase tracking-[0.18em] text-[rgb(var(--forge-brass))/0.8]">
-            Context
-          </p>
-          <p>
-            Use the binder on the left to switch chapters and scenes. Project
-            notes, scene beats, and AI suggestions will show up here later.
-          </p>
-          <p class="text-xs text-[rgb(var(--muted))]">
-            Current doc:{" "}
-            <span class="font-medium text-[rgb(var(--forge-brass))]">
-              {activeTitle()}
-            </span>
-          </p>
-        </div>
-      }
-    >
-      {(railState) => (
-        <div class="flex h-full flex-col">
-          {/* Toolbar directly under the navbar */}
-          <SmithyToolbar
-            format={format()}
-            onFormatChange={handleFormatChange}
-            onUndo={handleUndo}
-            onRedo={handleRedo}
-          />
+      </Show>
+
+      {/* Normal Smithy View */}
+      <Show when={!focusMode()}>
+        <ForgeShell
+          title="The Smithy"
+          leftPanel={
+            <Binder
+              onSelect={(id: string) => {
+                setActiveDocId(id);
+                setActiveTitle(id || "Untitled Scene");
+              }}
+            />
+          }
+          rightPanel={
+            <div class="space-y-3 text-sm">
+              <p class="text-xs uppercase tracking-[0.18em] text-[rgb(var(--forge-brass))/0.8]">
+                Context
+              </p>
+              <p>
+                Use the binder on the left to switch chapters and scenes. Project
+                notes, scene beats, and AI suggestions will show up here later.
+              </p>
+              <p class="text-xs text-[rgb(var(--muted))]">
+                Current doc:{" "}
+                <span class="font-medium text-[rgb(var(--forge-brass))]">
+                  {activeTitle()}
+                </span>
+              </p>
+            </div>
+          }
+        >
+          {(railState) => (
+            <div class="flex h-full flex-col">
+              {/* Toolbar directly under the navbar */}
+              <SmithyToolbar
+                format={format()}
+                onFormatChange={handleFormatChange}
+                onUndo={handleUndo}
+                onRedo={handleRedo}
+                focusMode={focusMode()}
+                onToggleFocus={() => setFocusMode(!focusMode())}
+              />
 
           {/* Main Smithy layout - responsive to rail state */}
           <div
@@ -273,6 +335,8 @@ export default function Smithy() {
           </div>
         </div>
       )}
-    </ForgeShell>
+        </ForgeShell>
+      </Show>
+    </>
   );
 }

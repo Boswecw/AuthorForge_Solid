@@ -174,4 +174,25 @@ impl Backend {
     pub fn render_prompt(&self, spec: &ContextSpec, seed: &str) -> String {
         build_prompt(spec, seed)
     }
+
+    // Character Arcs
+    pub async fn get_character_arcs(&self, project_id: &str) -> Result<String> {
+        let arcs = self.wb.get_character_arcs(project_id).await?;
+        Ok(serde_json::to_string(&arcs)?)
+    }
+
+    pub async fn get_character_arc(&self, arc_id: &str) -> Result<String> {
+        let arc = self.wb.get_character_arc(arc_id).await?;
+        Ok(serde_json::to_string(&arc)?)
+    }
+
+    pub async fn save_character_arc(&self, arc_json: &str) -> Result<String> {
+        let arc: world_builder::CharacterArc = serde_json::from_str(arc_json)?;
+        let saved = self.wb.save_character_arc(&arc).await?;
+        Ok(serde_json::to_string(&saved)?)
+    }
+
+    pub async fn delete_character_arc(&self, arc_id: &str) -> Result<()> {
+        self.wb.delete_character_arc(arc_id).await
+    }
 }

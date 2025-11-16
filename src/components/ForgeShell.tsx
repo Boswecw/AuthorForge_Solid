@@ -54,15 +54,33 @@ export default function ForgeShell(props: ForgeShellProps) {
               {/* main left content (binder OR default nav) */}
               <div class="flex-1 overflow-y-auto">
                 {props.leftPanel ?? (
-                  <ul class="p-2 space-y-1">
-                    <RailLink href="/hearth" label="Hearth" />
-                    <RailLink href="/foundry" label="Foundry" />
-                    <RailLink href="/smithy" label="Smithy" />
-                    <RailLink href="/anvil" label="Anvil" />
-                    <RailLink href="/lore" label="Lore" />
-                    <RailLink href="/bloom" label="Bloom" />
-                    <RailLink href="/boundary" label="Boundary" />
-                  </ul>
+                  <div class="p-2">
+                    {/* Primary Workspaces */}
+                    <div class="mb-1">
+                      <div class="px-2 pb-2 text-[0.65rem] uppercase tracking-wider text-[rgb(var(--forge-brass))]/60 font-semibold">
+                        Workspaces
+                      </div>
+                      <ul class="space-y-1">
+                        <RailLink href="/hearth" label="Hearth" />
+                        <RailLink href="/foundry" label="Foundry" />
+                        <RailLink href="/smithy" label="Smithy" />
+                        <RailLink href="/anvil" label="Anvil" />
+                        <RailLink href="/lore" label="Lore" />
+                        <RailLink href="/bloom" label="Bloom" />
+                      </ul>
+                    </div>
+
+                    {/* Utilities */}
+                    <div class="mt-4 pt-4 border-t border-[rgb(var(--forge-steel))/0.2]">
+                      <div class="px-2 pb-2 text-[0.65rem] uppercase tracking-wider text-[rgb(var(--forge-brass))]/60 font-semibold">
+                        Utilities
+                      </div>
+                      <ul class="space-y-1">
+                        <RailLink href="/tempering/p1" label="Tempering" />
+                        <RailLink href="/boundary" label="Boundary" />
+                      </ul>
+                    </div>
+                  </div>
                 )}
               </div>
 

@@ -9,6 +9,8 @@ interface SmithyToolbarProps {
   onFormatChange: (next: SmithyTextFormat) => void;
   onUndo?: () => void;
   onRedo?: () => void;
+  focusMode?: boolean;
+  onToggleFocus?: () => void;
 }
 
 export default function SmithyToolbar(props: SmithyToolbarProps) {
@@ -212,6 +214,19 @@ export default function SmithyToolbar(props: SmithyToolbarProps) {
             ↷
           </button>
         </div>
+      )}
+
+      {/* Focus Mode toggle */}
+      {props.onToggleFocus && (
+        <button
+          type="button"
+          class="rounded-md border px-3 py-1.5 text-sm bg-gradient-to-b from-[rgb(var(--forge-ember))]/25 to-transparent shadow-ember hover:from-[rgb(var(--forge-ember))]/35"
+          onClick={props.onToggleFocus}
+          aria-pressed={props.focusMode}
+          title="Toggle Focus Mode (F)"
+        >
+          {props.focusMode ? "Exit Focus" : "Focus Mode"}
+        </button>
       )}
     </div>
   );

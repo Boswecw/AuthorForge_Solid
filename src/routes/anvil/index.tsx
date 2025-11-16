@@ -1,160 +1,349 @@
-import { createSignal, For, Show } from "solid-js";
+import { createSignal, createResource, Show, onMount, createEffect } from "solid-js";
+import { isServer } from "solid-js/web";
 import ForgeShell from "~/components/ForgeShell";
+import CharacterList from "./components/CharacterList";
+import CharacterHeader from "./components/CharacterHeader";
+import ArcCards from "./components/ArcCards";
+import BeatTimeline from "./components/BeatTimeline";
+import CrossLinks from "./components/CrossLinks";
+import BeatEditor from "./components/BeatEditor";
+import StoryArcGraph from "./components/graph/StoryArcGraph";
+import type { CharacterArc, ArcBeat } from "./types";
+import { getCharacterArcs, saveCharacterArc, deleteCharacterArc } from "./api/mockTauriCommands";
+import { useToast } from "~/lib/hooks/useToast";
+import { validateCharacterArc, getValidationErrorMessage } from "~/lib/validation/characterArcValidation";
 
-type Arc = {
-  id: string;
-  name: string;
-  color: string;
-  beats: { id: string; title: string; summary: string; chapter?: string }[];
-};
-
-const mockArcs: Arc[] = [
-  {
-    id: "arc-1",
-    name: "Faith and Fire",
-    color: "forge-ember",
-    beats: [
-      { id: "b1", title: "Inciting Incident", summary: "Rawn is forced into exile." },
-      { id: "b2", title: "First Challenge", summary: "Storm magic emerges uncontrollably." },
-      { id: "b3", title: "Crisis of Faith", summary: "Rawn questions his purpose." },
-    ],
-  },
-  {
-    id: "arc-2",
-    name: "Amicae’s Path",
-    color: "forge-brass",
-    beats: [
-      { id: "b4", title: "Betrayal Revealed", summary: "Her clan aligns with the Ithek." },
-      { id: "b5", title: "Forbidden Alliance", summary: "She aids Rawn despite taboo." },
-    ],
-  },
-];
+type AnvilTab = 'arcs' | 'beats' | 'graph';
 
 export default function Anvil() {
-  const [selectedArc, setSelectedArc] = createSignal<Arc | null>(null);
-  const [zoom, setZoom] = createSignal(1);
+  // SSR guard for client-only operations
+  onMount(() => {
+    if (isServer) return;
+  });
 
+  const toast = useToast();
+
+  // Tab state - persist in localStorage
+  const [activeTab, setActiveTab] = createSignal<AnvilTab>('arcs');
+
+  // Load active tab from localStorage on mount
+  onMount(() => {
+    if (isServer) return;
+    const savedTab = localStorage.getItem('anvil-active-tab') as AnvilTab;
+    if (savedTab && ['arcs', 'beats', 'graph'].includes(savedTab)) {
+      setActiveTab(savedTab);
+    }
+  });
+
+  // Save active tab to localStorage when it changes
+  createEffect(() => {
+    if (isServer) return;
+    localStorage.setItem('anvil-active-tab', activeTab());
+  });
+
+  // State
+  const [selectedCharacterId, setSelectedCharacterId] = createSignal<string | undefined>();
+  const [editingBeat, setEditingBeat] = createSignal<ArcBeat | null>(null);
+  const [isBeatEditorOpen, setIsBeatEditorOpen] = createSignal(false);
+
+  // Load character arcs
+  // TODO: Get projectId from route params or global state
+  const projectId = "default-project";
+  const [characterArcs, { refetch }] = createResource(() => getCharacterArcs(projectId));
+
+  // Get selected character
+  const selectedCharacter = () => {
+    const id = selectedCharacterId();
+    if (!id) return null;
+    return characterArcs()?.find(arc => arc.id === id) || null;
+  };
+
+  // Auto-select first character on load
+  onMount(() => {
+    if (isServer) return;
+    
+    const checkAndSelect = () => {
+      const arcs = characterArcs();
+      if (arcs && arcs.length > 0 && !selectedCharacterId()) {
+        setSelectedCharacterId(arcs[0].id);
+      }
+    };
+    
+    // Check immediately and after a short delay
+    checkAndSelect();
+    setTimeout(checkAndSelect, 100);
+  });
+
+  // Handle character updates
+  const handleCharacterUpdate = async (updates: Partial<CharacterArc>) => {
+    const character = selectedCharacter();
+    if (!character) return;
+
+    const updatedCharacter = { ...character, ...updates };
+
+    // Validate before saving
+    const validation = validateCharacterArc(updatedCharacter);
+    if (!validation.valid) {
+      const errorMsg = getValidationErrorMessage(validation);
+      toast.error(errorMsg);
+      return;
+    }
+
+    try {
+      await saveCharacterArc(updatedCharacter);
+      await refetch();
+      toast.success("Character updated");
+    } catch (error) {
+      console.error("Failed to save character:", error);
+      toast.error("Failed to save character");
+    }
+  };
+
+  // Handle beat editing
+  const handleEditBeat = (beat: ArcBeat) => {
+    setEditingBeat(beat);
+    setIsBeatEditorOpen(true);
+  };
+
+  const handleSaveBeat = async (updatedBeat: ArcBeat) => {
+    const character = selectedCharacter();
+    if (!character) return;
+
+    const updatedBeats = character.beats.map(b => 
+      b.id === updatedBeat.id ? updatedBeat : b
+    );
+
+    await handleCharacterUpdate({ beats: updatedBeats });
+  };
+
+  const handleDeleteBeat = async (beatId: string) => {
+    const character = selectedCharacter();
+    if (!character) return;
+
+    const updatedBeats = character.beats.filter(b => b.id !== beatId);
+    await handleCharacterUpdate({ beats: updatedBeats });
+  };
+
+  // Handle AI assist
+  const handleAIAssist = (beat: ArcBeat) => {
+    handleEditBeat(beat);
+  };
+
+  // Handle add new character
+  const handleAddNewCharacter = async () => {
+    const newCharacter: CharacterArc = {
+      id: `char-${Date.now()}`,
+      name: "New Character",
+      bio: "",
+      species: "Human",
+      role: "Support",
+      povStatus: "Non-POV",
+      status: "Alive",
+      emotionalTags: [],
+      internalArc: { summary: "", notes: "", keyPoints: [] },
+      externalArc: { summary: "", notes: "", keyPoints: [] },
+      spiritualArc: { summary: "", notes: "", keyPoints: [] },
+      beats: [],
+      relationships: [],
+      projectId,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
+
+    try {
+      await saveCharacterArc(newCharacter);
+      await refetch();
+      setSelectedCharacterId(newCharacter.id);
+      toast.success("New character created");
+    } catch (error) {
+      console.error("Failed to create character:", error);
+      toast.error("Failed to create character");
+    }
+  };
+
+  // Handle delete character
+  const handleDeleteCharacter = async (characterId: string) => {
+    try {
+      const success = await deleteCharacterArc(characterId);
+      if (success) {
+        await refetch();
+        // If deleted character was selected, clear selection
+        if (selectedCharacterId() === characterId) {
+          setSelectedCharacterId(undefined);
+        }
+        toast.success("Character deleted");
+      } else {
+        toast.error("Failed to delete character");
+      }
+    } catch (error) {
+      console.error("Failed to delete character:", error);
+      toast.error("Failed to delete character");
+    }
+  };
+
+  // Right panel content
   const RightPanel = (
-    <div class="space-y-5 text-sm">
+    <div class="space-y-4">
       <section>
-        <h4 class="font-semibold mb-1">The Anvil</h4>
-        <p class="opacity-80">
-          Visualize story arcs, connect chapters, and ensure emotional pacing. Each beat
-          represents a pivotal scene or turning point.
+        <h4 class="font-semibold mb-2">The Anvil</h4>
+        <p class="text-sm opacity-90 mb-3">
+          Track character arcs across internal, external, and spiritual dimensions.
+          Map beats to chapters and use AI assistance for brainstorming.
         </p>
       </section>
-      <Show when={selectedArc()}>
-        {(arc) => (
-          <section>
-            <h4 class="font-semibold mb-1">Selected Arc</h4>
-            <div class="rounded-md border border-[rgb(var(--forge-steel))/0.3] p-3">
-              <div class="font-medium mb-1">{arc().name}</div>
-              <ul class="text-xs list-disc ml-5 space-y-1">
-                <For each={arc().beats}>
-                  {(b) => <li>{b.title}</li>}
-                </For>
-              </ul>
-            </div>
-          </section>
-        )}
-      </Show>
       <section>
-        <h4 class="font-semibold mb-1">Legend</h4>
-        <ul class="space-y-1 text-xs opacity-80">
-          <li><span class="text-[rgb(var(--forge-ember))]">●</span> Main conflict arc</li>
-          <li><span class="text-[rgb(var(--forge-brass))]">●</span> Character arc</li>
+        <h4 class="font-semibold mb-2">Arc Types</h4>
+        <ul class="space-y-2 text-sm opacity-90">
+          <li><strong>Internal:</strong> Flaw → Belief → Transformation</li>
+          <li><strong>External:</strong> Mission → Obstacles → Growth</li>
+          <li><strong>Spiritual:</strong> Journey → Tension → Resolution</li>
+        </ul>
+      </section>
+      <section>
+        <h4 class="font-semibold mb-2">Tips</h4>
+        <ul class="ml-5 list-disc space-y-1 text-sm opacity-90">
+          <li>Use emotional tags to guide AI tone</li>
+          <li>Link beats to specific chapters</li>
+          <li>Track relationships for consistency</li>
+          <li>Preserve spiritual arc details for faith themes</li>
         </ul>
       </section>
     </div>
   );
 
+  // Tab navigation component
+  const TabNav = () => (
+    <div class="flex gap-2 mb-6 border-b border-[var(--forge-steel)]">
+      <button
+        class={`px-4 py-2 font-semibold transition-all ${
+          activeTab() === 'arcs'
+            ? 'border-b-2 border-[var(--forge-brass)] text-[var(--forge-brass)]'
+            : 'text-[var(--fg)] opacity-60 hover:opacity-100'
+        }`}
+        onClick={() => setActiveTab('arcs')}
+      >
+        Character Arcs
+      </button>
+      <button
+        class={`px-4 py-2 font-semibold transition-all ${
+          activeTab() === 'beats'
+            ? 'border-b-2 border-[var(--forge-brass)] text-[var(--forge-brass)]'
+            : 'text-[var(--fg)] opacity-60 hover:opacity-100'
+        }`}
+        onClick={() => setActiveTab('beats')}
+      >
+        Beats
+      </button>
+      <button
+        class={`px-4 py-2 font-semibold transition-all ${
+          activeTab() === 'graph'
+            ? 'border-b-2 border-[var(--forge-brass)] text-[var(--forge-brass)]'
+            : 'text-[var(--fg)] opacity-60 hover:opacity-100'
+        }`}
+        onClick={() => setActiveTab('graph')}
+      >
+        Graph
+      </button>
+    </div>
+  );
+
+  // Character Arcs view (existing content)
+  const CharacterArcsView = () => (
+    <Show
+      when={selectedCharacter()}
+      fallback={
+        <div class="flex items-center justify-center h-full">
+          <div class="text-center opacity-50">
+            <p class="text-lg mb-2">No character selected</p>
+            <p class="text-sm">Select a character from the left panel or create a new one</p>
+          </div>
+        </div>
+      }
+    >
+      {(character) => (
+        <div class="space-y-6">
+          <CharacterHeader
+            character={character()}
+            onChange={handleCharacterUpdate}
+          />
+
+          <ArcCards
+            character={character()}
+            onChange={handleCharacterUpdate}
+          />
+
+          <BeatTimeline
+            character={character()}
+            onChange={handleCharacterUpdate}
+            onEditBeat={handleEditBeat}
+            onAIAssist={handleAIAssist}
+          />
+
+          <CrossLinks character={character()} />
+        </div>
+      )}
+    </Show>
+  );
+
+  // Beats view (placeholder for now)
+  const BeatsView = () => (
+    <div class="flex items-center justify-center h-full">
+      <div class="text-center opacity-50">
+        <p class="text-lg mb-2">Beats View</p>
+        <p class="text-sm">Coming soon - Unified beat timeline across all characters</p>
+      </div>
+    </div>
+  );
+
+  // Graph view
+  const GraphView = () => <StoryArcGraph projectId={projectId} />;
+
   return (
-    <ForgeShell title="The Anvil" rightPanel={RightPanel}>
-      {/* Header */}
-      <header class="mb-6 flex items-center justify-between">
-        <div>
-          <h1 class="font-display text-2xl tracking-wide">The Anvil</h1>
-          <p class="text-sm opacity-80">
-            Visualize arcs and structure your story.
-          </p>
-        </div>
-        <div class="flex items-center gap-2">
-          <button
-            class="rounded-md border border-[rgb(var(--forge-steel))/0.3] px-3 py-2 text-sm hover:bg-white/5"
-            onClick={() => setZoom((z) => Math.max(0.8, z - 0.1))}
-          >
-            −
-          </button>
-          <button
-            class="rounded-md border border-[rgb(var(--forge-steel))/0.3] px-3 py-2 text-sm hover:bg-white/5"
-            onClick={() => setZoom((z) => Math.min(1.4, z + 0.1))}
-          >
-            ＋
-          </button>
-        </div>
-      </header>
+    <>
+      <ForgeShell
+        title="The Anvil"
+        rightPanel={RightPanel}
+        leftPanel={
+          activeTab() === 'arcs' ? (
+            <CharacterList
+              characters={characterArcs() || []}
+              selectedId={selectedCharacterId()}
+              onSelect={setSelectedCharacterId}
+              onAddNew={handleAddNewCharacter}
+              onDelete={handleDeleteCharacter}
+            />
+          ) : null
+        }
+      >
+        <TabNav />
 
-      {/* Arc timeline */}
-      <section class="rounded-xl2 border border-[rgb(var(--forge-steel))/0.3] bg-[rgb(var(--bg))]/0.9 shadow-card p-5 overflow-auto">
-        <div
-          class="relative"
-          style={{
-            transform: `scale(${zoom()})`,
-            "transform-origin": "top left",
-            transition: "transform 0.2s ease",
-          }}
-        >
-          <For each={mockArcs}>
-            {(arc) => (
-              <div
-                class="mb-8"
-                onClick={() => setSelectedArc(arc)}
-                classList={{
-                  "cursor-pointer": true,
-                  "opacity-100": selectedArc()?.id === arc.id,
-                  "opacity-70 hover:opacity-100": selectedArc()?.id !== arc.id,
-                }}
-              >
-                <div class="flex items-center gap-2 mb-3">
-                  <div
-                    class={`h-3 w-3 rounded-full bg-[rgb(var(--${arc.color}))]`}
-                  />
-                  <h2 class="font-semibold tracking-wide">{arc.name}</h2>
-                </div>
+        <Show when={activeTab() === 'arcs'}>
+          <CharacterArcsView />
+        </Show>
 
-                {/* Beats timeline */}
-                <div class="relative pl-6">
-                  <div class="absolute left-1.5 top-1 bottom-0 w-px bg-[rgb(var(--forge-steel))/0.3]" />
-                  <ul class="space-y-4">
-                    <For each={arc.beats}>
-                      {(b) => (
-                        <li>
-                          <div
-                            class="ml-3 pl-4 border-l-4 rounded-l-md
-                                   border-[rgb(var(--forge-brass))]/50
-                                   hover:bg-[rgb(var(--forge-ash))]/20 p-2
-                                   transition-colors duration-100"
-                          >
-                            <div class="font-medium text-sm">{b.title}</div>
-                            <p class="text-xs opacity-80">{b.summary}</p>
-                            <Show when={b.chapter}>
-                              <p class="text-[10px] opacity-70 mt-1">
-                                Linked to: {b.chapter}
-                              </p>
-                            </Show>
-                          </div>
-                        </li>
-                      )}
-                    </For>
-                  </ul>
-                </div>
-              </div>
-            )}
-          </For>
-        </div>
-      </section>
-    </ForgeShell>
+        <Show when={activeTab() === 'beats'}>
+          <BeatsView />
+        </Show>
+
+        <Show when={activeTab() === 'graph'}>
+          <GraphView />
+        </Show>
+      </ForgeShell>
+
+      {/* Beat Editor Modal */}
+      <Show when={selectedCharacter()}>
+        {(character) => (
+          <BeatEditor
+            beat={editingBeat()}
+            character={character()}
+            isOpen={isBeatEditorOpen()}
+            onClose={() => setIsBeatEditorOpen(false)}
+            onSave={handleSaveBeat}
+            onDelete={handleDeleteBeat}
+          />
+        )}
+      </Show>
+    </>
   );
 }
 
-/* Utility: you can extract this into a future component if you like */
